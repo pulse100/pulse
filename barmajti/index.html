@@ -544,6 +544,17 @@ const fxColors = d => d.fx==='hearts'?[d.acc,'#e35d72','#ffb3c1']:d.fx==='stars'
 
 /* ---------- public site ---------- */
 let filter='all';
+/* روابط مباشرة للأقسام: ?category=birthday أو #birthday */
+const SLUGS={graduation:'grad',birthday:'bday',love:'love',occasions:'occ'};
+const slugOf=k=>Object.keys(SLUGS).find(s=>SLUGS[s]===k);
+function readCategory(){
+  let q=null;try{q=new URLSearchParams(location.search).get('category');}catch(e){}
+  const h=location.hash.slice(1);
+  return SLUGS[q]||SLUGS[h]||null;
+}
+function writeCategory(k){
+  try{const u=new URL(location.href);if(k==='all')u.searchParams.delete('category');else u.searchParams.set('category',slugOf(k));history.replaceState(null,'',u.pathname+u.search+u.hash);}catch(e){}
+}
 const visible = () => DATA.designs.filter(d=>d.show);
 function renderChips(){
   const v=visible();
@@ -896,17 +907,19 @@ async function boot(){
   const local=store.get(LS_KEY);
   DATA = normalize(local || PUBLISHED || DEFAULTS);
   registerCustomFonts();
+  const cat=readCategory(); if(cat) filter=cat;
   renderSite(); route();
+  if(cat) requestAnimationFrame(()=>$('#designs').scrollIntoView());
   requestAnimationFrame(drawCircuit);
 }
-$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filter=b.dataset.f;renderChips();renderGrid();});
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filter=b.dataset.f;writeCategory(filter);renderChips();renderGrid();});
 $('#grid').addEventListener('click',e=>{const c=e.target.closest('.card');if(c)openSheet(c.dataset.id);});
 $('#tabs').addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(!t)return;if(t.dataset.tab==='edit')editing=null;tab=t.dataset.tab;renderAdmin();});
 $('#exitAdmin').onclick=e=>{e.preventDefault();history.pushState('',document.title,location.pathname);route();};
 /* مدخل مخفي للمصمم: اضغط على الشعار ٥ مرات بسرعة، أو افتح الرابط مع #admin */
 let taps=0,tapT;
 $('#brandLink').addEventListener('click',e=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>taps=0,1500);if(taps>=5){e.preventDefault();taps=0;location.hash='admin';}});
-addEventListener('hashchange',route);
+addEventListener('hashchange',()=>{const c=readCategory();if(c){filter=c;renderChips();renderGrid();$('#designs').scrollIntoView();}route();});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#ov')&&!$('#exp'))closeSheet();});
 let rT;addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(drawCircuit,200);});
 boot();
