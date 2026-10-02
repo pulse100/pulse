@@ -188,13 +188,13 @@ const L = {
   ar:{open:'اضغط للفتح',gift:'وصلتك هدية',tapBox:'اضغط على الصندوق',time:'الساعة',where:'الموقع',where2:'الموقع الثاني',map:'افتح الخريطة',save:'احفظ الموعد',count:'العد التنازلي',d:'أيام',h:'ساعات',m:'دقائق',s:'ثواني',
     prog:'برنامج المناسبة',det:'التعليمات',wishes:'جدار التهاني',album:'ألبوم الصور',contact:'تواصل',music:'موسيقى',wish:'تهنئة',rsvp:'تأكيد الحضور',loading:'جاري تحميل الأغنية…',noYT:'الأغنية تشتغل بالرابط المنشور',playing:'الموسيقى تشتغل',tap:'اضغط لتشغيل الموسيقى',
     made:'صُنعت بحب في برمجتي',yourName:'اسمك',yes:'أكيد جاي',no:'أعتذر',sendR:'أرسل الرد',sendW:'أرسل التهنئة',writeW:'اكتب تهنئتك',close:'إغلاق',guests:'عدد الأشخاص',lang:'EN',
-    family:'بدعوة من',message:'كلمة من القلب',story:'قصتنا',reasons:'ليش أحبك انت بالذات',song:'أغنية تذكرني بيك',dress:'لون اللبس',video:'شاهد الفيديو',guestcam:'كاميرا الضيوف',
+    guestLine:'يسعدنا ويشرفنا حضور',toG:'إلى',family:'بدعوة من',message:'كلمة من القلب',story:'قصتنا',reasons:'ليش أحبك انت بالذات',song:'أغنية تذكرني بيك',dress:'لون اللبس',video:'شاهد الفيديو',guestcam:'كاميرا الضيوف',
     camText:'التقط صورة من الحفل، وتنحفظ هنا ويشوفها الكل',snap:'التقط صورة',pick:'من المعرض',attend:'عدد الحضور',attendNote:'شخص أكدوا حضورهم',qr:'امسح الرمز وشارك الدعوة',contacts:'للتواصل',
     noWishes:'كون أول واحد يكتب تهنئة',noPhotos:'ماكو صور بعد، صوّر أول لقطة',saved:'انحفظت الصورة',hijri:'',next:'التالي',prev:'السابق',play:'شغّل الأغنية',pause:'وقّف',page:'صفحة'},
   en:{open:'TAP TO OPEN',gift:'A gift for you',tapBox:'Tap the box',time:'Time',where:'Location',where2:'Second location',map:'Open map',save:'Save the date',count:'Countdown',d:'Days',h:'Hours',m:'Minutes',s:'Seconds',
     prog:'Programme',det:'Details',wishes:'Wishes',album:'Album',contact:'Contact',music:'Music',wish:'Wish',rsvp:'RSVP',loading:'Loading the song…',noYT:'The song plays on the published link',playing:'Music on',tap:'Tap to start music',
     made:'Made with love by Barmajti',yourName:'Your name',yes:'Attending',no:'Can\'t make it',sendR:'Send reply',sendW:'Send wish',writeW:'Write a wish',close:'Close',guests:'Guests',lang:'ع',
-    family:'Hosted by',message:'From the heart',story:'Our story',reasons:'Why I love you',song:'Our song',dress:'Dress code',video:'Watch the video',guestcam:'Guest camera',
+    guestLine:'We would be honoured by the presence of',toG:'To',family:'Hosted by',message:'From the heart',story:'Our story',reasons:'Why I love you',song:'Our song',dress:'Dress code',video:'Watch the video',guestcam:'Guest camera',
     camText:'Snap a photo at the party — it is saved here for everyone',snap:'Take a photo',pick:'From gallery',attend:'Guests attending',attendNote:'people confirmed',qr:'Scan to share the invitation',contacts:'Contact',
     noWishes:'Be the first to leave a wish',noPhotos:'No photos yet — take the first one',saved:'Photo saved',hijri:'',next:'Next',prev:'Back',page:'Page',play:'Play our song',pause:'Pause'}
 };
@@ -206,7 +206,7 @@ const base={show:true,feat:false,pop:0,layout:'scroll',theme:'paper',photo:'',ph
   bg:'#f8f3ea',card:'#fffdf8',ink:'#3a2d22',acc:'#b08a4a',acc2:'#eadfcd',door:'#efe4d2',wax:'#9b6b26',pal:'ivoryGold',
   title:'',name:'',sub:'',cardTitle:'',invite:'',date:'',time:'',hijri:false,venue:'',map:'',venue2:'',map2:'',program:[],details:[],closing:'',
   family:[],msgTitle:'',msgBody:'',msgSign:'',quote:'',quoteSrc:'',video:'',contacts:[],
-  wishes:[],photos:[],img:'',layers:[],corners:'gold',host:'',attendBase:0,titles:{},sections:null};
+  wishes:[],photos:[],img:'',layers:[],corners:'gold',host:'',attendBase:0,guestLine:'',titles:{},sections:null};
 
 /* ---------- layer presets ---------- */
 const LP = {

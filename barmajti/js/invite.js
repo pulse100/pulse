@@ -92,8 +92,10 @@ function heroHTML(d,lang){
     ${d.layout!=='book'?ic('down','i h-down'):''}</section>`;
 }
 /* every section returns '' when it has nothing to show */
+/* personal line when the link carries a guest name (?to=) */
+const guestHTML=(d,T)=>d.guest?`<div class="iguest"><small>${esc(d.guestLine||T.guestLine)}</small><b class="${metal(d)}">${esc(d.guest)}</b></div>`:'';
 const SEC={
-  card:(d,T)=>d.cardTitle||d.invite?card(d,`${d.cardTitle?`<div class="ititle">${esc(d.titles?.card||d.cardTitle)}</div>`:''}${d.invite?`<p class="c-text">${esc(d.invite)}</p>`:''}<div class="c-sign ${metal(d)}">${esc(d.name)}</div>`):'',
+  card:(d,T)=>d.cardTitle||d.invite||d.guest?card(d,`${guestHTML(d,T)}${d.cardTitle?`<div class="ititle">${esc(d.titles?.card||d.cardTitle)}</div>`:''}${d.invite?`<p class="c-text">${esc(d.invite)}</p>`:''}<div class="c-sign ${metal(d)}">${esc(d.name)}</div>`):'',
   family:(d,T)=>d.family?.length?card(d,`<div class="ih">${title(d,'family',T.family)}</div><div class="ifam">${d.family.map(([a,b])=>`<div>${a?`<small>${esc(a)}</small>`:''}<b>${esc(b)}</b></div>`).join('')}</div>`):'',
   message:(d,T)=>d.msgBody?card(d,`<div class="ih">${esc(d.msgTitle||T.message)}</div><p class="c-text">${esc(d.msgBody)}</p>${d.msgSign?`<div class="c-sign ${metal(d)}">${esc(d.msgSign)}</div>`:''}`,'paperish'):'',
   quote:(d,T)=>d.quote?`<figure class="iquote">${ic('quote')}<blockquote>${esc(d.quote)}</blockquote>${d.quoteSrc?`<figcaption>${esc(d.quoteSrc)}</figcaption>`:''}</figure>`:'',
@@ -153,7 +155,7 @@ function introHTML(d,lang){
   if(d.intro==='doors')return `<div class="intro intro-doors"><div class="glow"></div><div class="door l"><i></i></div><div class="door r"><i></i></div>${wax}${hint}</div>`;
   if(d.intro==='curtain')return `<div class="intro intro-curtain" style="--hc:#fff;--vc:${velvet(d)}"><div class="cur l"></div><div class="cur r"></div><div class="valance"></div><div class="spot"></div>${wax}${hint}</div>`;
   if(d.intro==='envelope')return `<div class="intro intro-env" style="--hc:#fff"><div class="env-surf" style="background-image:url('${esc(surface(d))}')"></div>
-    <div class="env"><div class="env-back"></div><div class="env-letter"><small>${esc(d.sub||'')}</small><b class="${metal(d)}">${esc(d.name)}</b><span></span></div><div class="env-front"></div><div class="env-flap"><i></i></div>${wax}</div>${hint}</div>`;
+    <div class="env"><div class="env-back"></div><div class="env-letter">${d.guest?`<em class="eto">${T.toG}: ${esc(d.guest)}</em>`:''}<small>${esc(d.sub||'')}</small><b class="${metal(d)}">${esc(d.name)}</b><span></span></div><div class="env-front"></div><div class="env-flap"><i></i></div>${wax}</div>${hint}</div>`;
   if(d.intro==='box')return `<div class="intro intro-box" style="--hc:${hex(d.card)}"><button class="gb" type="button" data-open aria-label="${T.open}">${giftBoxSVG()}</button><p>${T.gift}</p><div class="hint">${T.tapBox}</div></div>`;
   return'';
 }
@@ -180,7 +182,7 @@ function phone(d,mode){const p=document.createElement('div');p.className='phone'
 /* ---------- live behaviour ---------- */
 const frames=new Set();
 function loadQR(){return window.QRCode?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
-function giftURL(d){try{const u=new URL(location.href);u.hash='';u.search='?gift='+d.code;return u.href;}catch(e){return '?gift='+d.code;}}
+function giftURL(d,guest){const q='?gift='+d.code+(guest?'&to='+encodeURIComponent(guest):'');try{const u=new URL(location.href);u.hash='';u.search=q;return u.href;}catch(e){return q;}}
 async function fillGuest(f,d){
   const T=L[f.dataset.lang]||L.ar,g=await Guest.list(d.code||d.id);
   const gp=$('[data-gphotos]',f);if(gp)gp.innerHTML=g.photo.length?g.photo.map(p=>`<figure><img src="${esc(p.photo)}" alt="" loading="lazy">${p.name?`<figcaption>${esc(p.name)}</figcaption>`:''}</figure>`).join(''):`<p class="muted">${T.noPhotos}</p>`;

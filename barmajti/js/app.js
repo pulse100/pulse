@@ -17,6 +17,8 @@ const visible=()=>DATA.designs.filter(d=>d.show);
 const slugOf=k=>Object.keys(SLUGS).find(s=>SLUGS[s]===k);
 function readCategory(){let q=null;try{q=new URLSearchParams(location.search).get('category');}catch(e){}return SLUGS[q]||SLUGS[location.hash.slice(1)]||null;}
 function writeCategory(k){try{const u=new URL(location.href);if(k==='all')u.searchParams.delete('category');else u.searchParams.set('category',slugOf(k));history.replaceState(null,'',u.pathname+u.search+u.hash);}catch(e){}}
+function readGuest(){try{return (new URLSearchParams(location.search).get('to')||'').trim().slice(0,80);}catch(e){return'';}}
+const wantsNames=()=>{try{return new URLSearchParams(location.search).has('names');}catch(e){return false;}};
 function readGift(){let q=null;try{q=new URLSearchParams(location.search).get('gift');}catch(e){}const h=location.hash.slice(1);const code=(q||(/^BR-\d+$/i.test(h)?h:'')||'').toUpperCase();return code?DATA.designs.find(d=>d.code===code):null;}
 
 /* thumbnails are drawn only when they scroll into view */
@@ -156,8 +158,33 @@ function buildOrder(d){
   $('#orderOut').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function openGiftMode(d){
+  const guest=readGuest();if(guest){let line='';try{line=(new URLSearchParams(location.search).get('line')||'').slice(0,120);}catch(e){}d={...d,guest,...(line?{guestLine:line}:{})};}
   const g=document.createElement('div');g.className='giftmode';g.id='giftmode';g.appendChild(makeFrame(d,'live'));
-  document.body.appendChild(g);document.body.style.overflow='hidden';document.title=(d.sub?d.sub+' · ':'')+d.name;
+  document.body.appendChild(g);document.body.style.overflow='hidden';document.title=(guest?guest+' · ':'')+(d.sub?d.sub+' · ':'')+d.name;
+}
+/* personal invitations: one link per guest name. Opened from the admin list, or by the client with ?gift=CODE&names */
+const NAMES_KEY=code=>'barmajti:names:'+code;
+function namesURL(d){try{const u=new URL(location.href);u.hash='';u.search='?gift='+d.code+'&names';return u.href;}catch(e){return '?gift='+d.code+'&names';}}
+function namesTool(d,standalone){
+  let saved='';try{saved=localStorage.getItem(NAMES_KEY(d.code))||'';}catch(e){}
+  const ov=document.createElement('div');ov.className='overlay'+(standalone?' names-page':'');
+  ov.innerHTML=`<div class="sheet names" role="dialog" aria-modal="true" aria-labelledby="nT">${standalone?'':'<button class="x" type="button" data-close aria-label="إغلاق">×</button>'}
+    <h2 id="nT">دعوات بالاسم · ${esc(d.name)}</h2>
+    <p class="note" style="margin:0">اكتب اسم كل ضيف بسطر. كل اسم ياخذ رابط خاص، ولما يفتحه تطلع الدعوة باسمه.</p>
+    <div class="field"><label for="nLine">الجملة اللي قبل الاسم</label><input id="nLine" value="${esc(d.guestLine||L.ar.guestLine)}"></div>
+    <div class="field"><label for="nList">الأسماء</label><textarea id="nList" rows="7" placeholder="السيد علي حسن وعائلته&#10;الحاج أبو محمد&#10;الست أم زينب">${esc(saved)}</textarea></div>
+    <div class="row"><button class="btn sm" type="button" id="nMake">سوّي الروابط</button><button class="btn sm ghost" type="button" id="nAll">نسخ كل الروابط</button>${standalone?'':'<button class="btn sm ghost" type="button" id="nHost">نسخ رابط الصفحة للزبون</button>'}</div>
+    <div class="nlist" id="nOut"></div></div>`;
+  const out=$('#nOut',ov),list=()=>lines($('#nList',ov).value);
+  const link=n=>{const u=giftURL(d,n);const l=$('#nLine',ov).value.trim();return l&&l!==(d.guestLine||L.ar.guestLine)?u+'&line='+encodeURIComponent(l):u;};
+  const draw=()=>{const ns=list();try{localStorage.setItem(NAMES_KEY(d.code),ns.join('\n'));}catch(e){}
+    out.innerHTML=ns.map((n,i)=>`<div class="nrow"><b>${esc(n)}</b><span><button class="btn sm ghost" type="button" data-cp="${i}">نسخ</button><a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(n+'\n'+$('#nLine',ov).value.trim()+'\n'+link(n))}">واتساب</a><a class="btn sm ghost" target="_blank" rel="noopener" href="${esc(link(n))}">معاينة</a></span></div>`).join('')||'<p class="note">ماكو أسماء بعد</p>';};
+  $('#nMake',ov).onclick=draw;
+  $('#nAll',ov).onclick=()=>{const ns=list();if(!ns.length){toast('اكتب الأسماء أول');return;}copyText(ns.map(n=>n+': '+link(n)).join('\n'));};
+  if(!standalone)$('#nHost',ov).onclick=()=>copyText(namesURL(d));
+  out.addEventListener('click',e=>{const b=e.target.closest('[data-cp]');if(b)copyText(link(list()[+b.dataset.cp]));});
+  ov.addEventListener('click',e=>{if(!standalone&&(e.target===ov||e.target.closest('[data-close]')))ov.remove();});
+  document.body.appendChild(ov);if(saved)draw();
 }
 
 /* =========================================================
@@ -196,7 +223,7 @@ function adminList(P){
     it.appendChild(thumbSlot(d));
     it.insertAdjacentHTML('beforeend',`<h3>${esc(d.title||'بدون اسم')}</h3>
       <div class="row"><span class="code">${esc(d.code)}</span><span class="pill">${CATS[d.cat]||''}</span>${d.show?'':'<span class="pill off">مخفي</span>'}${d.feat?'<span class="pill">بالواجهة</span>':''}</div>
-      <div class="row"><button class="btn sm" type="button" data-a="edit">تعديل</button><button class="btn sm ghost" type="button" data-a="link">رابط الهدية</button><button class="btn sm ghost" type="button" data-a="guests">ردود الضيوف</button>
+      <div class="row"><button class="btn sm" type="button" data-a="edit">تعديل</button><button class="btn sm ghost" type="button" data-a="link">رابط الهدية</button><button class="btn sm ghost" type="button" data-a="guests">ردود الضيوف</button><button class="btn sm ghost" type="button" data-a="names">دعوات بالاسم</button>
         <button class="btn sm ghost" type="button" data-a="toggle">${d.show?'إخفاء':'إظهار'}</button><button class="btn sm ghost" type="button" data-a="dup">نسخ</button>
         <button class="btn sm ghost" type="button" data-a="up" ${i?'':'disabled'} aria-label="تقديم">↑</button><button class="btn sm ghost" type="button" data-a="del">حذف</button></div>`);
     it.addEventListener('click',async e=>{
@@ -204,6 +231,7 @@ function adminList(P){
       if(a==='edit'){editing=d.id;tab='edit';renderAdmin();return;}
       if(a==='link'){copyText(giftURL(d));return;}
       if(a==='guests'){showGuests(d);return;}
+      if(a==='names'){namesTool(d);return;}
       if(a==='toggle')d.show=!d.show;
       if(a==='dup'){const c={...structuredClone(d),id:'d'+Date.now().toString(36),code:nextCode(),title:d.title+' (نسخة)',show:false,feat:false};DATA.designs.splice(i+1,0,c);}
       if(a==='up')[DATA.designs[i-1],DATA.designs[i]]=[DATA.designs[i],DATA.designs[i-1]];
@@ -227,7 +255,7 @@ async function showGuests(d){
 const artThumb=(a,t)=>{const A=ART[a];if(!A)return'';if(A.svg)return SVGART[a](t||Object.keys(A.tints)[0]);if(A.mask)return`<div class="mask tn-${TINTS[t]?t:'gold'}" style="--m:url(${ART_DIR}${a}.webp)"></div>`;return`<img src="${ART_DIR}${a}.webp" alt="" loading="lazy">`;};
 /* fields each section can edit inside the designer */
 const SEC_FIELDS={
-  card:[['cardTitle','عنوان البطاقة'],['invite','نص الدعوة','ta']],
+  card:[['guestLine','الجملة قبل اسم الضيف (بالدعوات بالاسم)'],['cardTitle','عنوان البطاقة'],['invite','نص الدعوة','ta']],
   family:[['family','كل سطر: الصفة | الأسماء','pairs']],
   message:[['msgTitle','العنوان'],['msgBody','الكلمة','ta'],['msgSign','التوقيع']],
   quote:[['quote','الآية أو البيت','ta'],['quoteSrc','المصدر']],
@@ -481,7 +509,7 @@ async function boot(){
   let local=null;try{local=JSON.parse(localStorage.getItem(LS_KEY));}catch(e){}
   DATA=normalize(local||PUBLISHED||DEFAULTS);
   registerCustomFonts();
-  const gift=readGift();if(gift){openGiftMode(gift);return;}
+  const gift=readGift();if(gift){if(wantsNames()){$('#site').hidden=true;document.title='دعوات بالاسم · '+gift.name;namesTool(gift,true);return;}openGiftMode(gift);return;}
   const cat=readCategory();if(cat)filter=cat;
   renderSite();route();
   if(cat)requestAnimationFrame(()=>$('#designs').scrollIntoView());
