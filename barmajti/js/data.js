@@ -453,4 +453,4 @@ function buildDesigns(){
   });
   return out;
 }
-const DEFAULTS={seq:1000,settings:{whatsapp:'',phone:'',telegram:'',instagram:IG_DEFAULT,adminCode:'1234',tagline:'هدايا ودعوات إلكترونية بخط عربي',sbUrl:'',sbKey:''},fonts:[],designs:buildDesigns()};
+const DEFAULTS={seq:1000,settings:{whatsapp:'',phone:'',telegram:'',instagram:IG_DEFAULT,adminCode:'haedar07729937388',tagline:'هدايا ودعوات إلكترونية بخط عربي',sbUrl:'',sbKey:''},fonts:[],designs:buildDesigns()};

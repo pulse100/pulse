@@ -7,7 +7,7 @@ async function copyText(txt,fallbackEl){
   try{await navigator.clipboard.writeText(txt);toast('تم النسخ');}
   catch(e){if(fallbackEl){const r=document.createRange();r.selectNodeContents(fallbackEl);const s=getSelection();s.removeAllRanges();s.addRange(r);}toast('حدّد النص وانسخه يدوياً');}
 }
-function normalize(v){return{seq:Math.max(v.seq||0,DEFAULTS.seq),settings:{...DEFAULTS.settings,...(v.settings||{})},fonts:v.fonts||[],designs:(v.designs||[]).filter(d=>CATS[d.cat]).map(d=>{const o={...structuredClone(base),...d};if(/^trk:/.test(o.music||'')){const sg=songsFor(o.cat)[0];o.music=sg?'yt:'+sg.id:'';o.musicStart=sg?sg.s:0;}return o;})};}
+function normalize(v){return{seq:Math.max(v.seq||0,DEFAULTS.seq),settings:{...DEFAULTS.settings,...(v.settings||{}),...(String(v.settings?.adminCode||'')==='1234'?{adminCode:DEFAULTS.settings.adminCode}:{})},fonts:v.fonts||[],designs:(v.designs||[]).filter(d=>CATS[d.cat]).map(d=>{const o={...structuredClone(base),...d};if(/^trk:/.test(o.music||'')){const sg=songsFor(o.cat)[0];o.music=sg?'yt:'+sg.id:'';o.musicStart=sg?sg.s:0;}return o;})};}
 
 /* =========================================================
    PUBLIC SITE
