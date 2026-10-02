@@ -98,10 +98,6 @@ const SEC={
   message:(d,T)=>d.msgBody?card(d,`<div class="ih">${esc(d.msgTitle||T.message)}</div><p class="c-text">${esc(d.msgBody)}</p>${d.msgSign?`<div class="c-sign ${metal(d)}">${esc(d.msgSign)}</div>`:''}`,'paperish'):'',
   quote:(d,T)=>d.quote?`<figure class="iquote">${ic('quote')}<blockquote>${esc(d.quote)}</blockquote>${d.quoteSrc?`<figcaption>${esc(d.quoteSrc)}</figcaption>`:''}</figure>`:'',
   album:(d,T)=>{const ps=[...(d.photos||[]),...(d.img?[d.img]:[])].filter(safeImg);return ps.length?`<div class="ih">${title(d,'album',T.album)}</div><div class="ialbum">${ps.map((p,i)=>`<img src="${esc(p)}" alt="" loading="lazy" style="--rt:${[-3,2,-1.5,3,-2][i%5]}deg">`).join('')}</div>`:'';},
-  story:(d,T)=>d.story?.length?`<div class="ih">${title(d,'story',T.story)}</div><ol class="istory">${d.story.map(([a,b])=>`<li class="rv"><span class="sd">${esc(a)}</span><span class="st">${esc(b)}</span></li>`).join('')}</ol>`:'',
-  reasons:(d,T)=>d.reasons?.length?card(d,`<div class="ih">${title(d,'reasons',T.reasons)}</div><ul class="ireasons">${d.reasons.map(x=>`<li class="rv">${ic('heart')}<span>${esc(x)}</span></li>`).join('')}</ul>`):'',
-  song:(d,T)=>{if(!d.music)return'';const yt=d.music.startsWith('yt:')?songById(d.music.slice(3)):null;const nm=yt?yt.n:TRACKS[d.music.replace('trk:','')]?.n||d.musicName||'';
-    return card(d,`<div class="ih">${title(d,'song',T.song)}</div><div class="vinyl" aria-hidden="true"><i></i></div><div class="sname">${esc(nm)}</div>${d.songNote?`<p class="c-text">${esc(d.songNote)}</p>`:''}<button class="ipill" type="button" data-act="music">${ic('play')}${T.play}</button>`);},
   venue:(d,T)=>d.venue?`<div class="ivenue"><span class="ilabel">${ic('pin')}${T.where}</span><strong>${esc(d.venue)}</strong>${safeUrl(d.map)?`<a class="ipill" href="${esc(safeUrl(d.map))}" target="_blank" rel="noopener">${ic('pin')}${T.map}</a>`:''}
     ${d.venue2?`<span class="ilabel" style="margin-top:4cqw">${ic('pin')}${T.where2}</span><strong>${esc(d.venue2)}</strong>${safeUrl(d.map2)?`<a class="ipill" href="${esc(safeUrl(d.map2))}" target="_blank" rel="noopener">${ic('pin')}${T.map}</a>`:''}`:''}</div>`:'',
   calendar:(d,T,lang)=>{const t=when(d);if(!t)return'';return `<div class="ical"><div class="cal-h"><span>${esc(fmt(t,{weekday:'long'},lang))}</span><b>${esc(fmt(t,{month:'long'},lang))}</b><span>${esc(fmt(t,{year:'numeric'},lang))}</span></div>
@@ -110,7 +106,6 @@ const SEC={
   countdown:(d,T,lang)=>{const t=when(d);if(!t||t<Date.now())return'';return card(d,`<span class="ilabel">${ic('clock')}${T.count}</span><div class="icount" data-cd="${t.getTime()}" data-lang="${lang}"><div><b>0</b><small>${T.d}</small></div><div><b>0</b><small>${T.h}</small></div><div><b>0</b><small>${T.m}</small></div><div><b>0</b><small>${T.s}</small></div></div>`);},
   program:(d,T,lang)=>d.program?.length?card(d,`<div class="ih">${title(d,'program',T.prog)}</div><div class="iprog">${d.program.map(([tm,l])=>`<div class="row rv"><span class="lab">${esc(l)}</span><span class="dot"></span><span class="tm">${esc(/^\d{1,2}:\d{2}$/.test(tm)?fmtTime(tm,lang):tm)}</span></div>`).join('')}</div>`):'',
   details:(d,T)=>d.details?.length?`<div class="ih">${title(d,'details',T.det)}</div><div class="idet">${d.details.map(x=>`<div>${ic('info')}<span>${esc(x)}</span></div>`).join('')}</div>`:'',
-  dress:(d,T)=>d.dressText||d.dressColors?.length?card(d,`<div class="ih">${title(d,'dress',T.dress)}</div>${d.dressColors?.length?`<div class="swt">${d.dressColors.map(c=>`<i style="background:${hex(c)}"></i>`).join('')}</div>`:''}${d.dressText?`<p class="c-text">${esc(d.dressText)}</p>`:''}`):'',
   video:(d,T)=>{const v=String(d.video||'').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|^)([\w-]{11})(?:\b|$)/);return v?`<a class="ivideo" href="https://www.youtube.com/watch?v=${v[1]}" target="_blank" rel="noopener">${ic('video')}<span>${title(d,'video',T.video)}</span></a>`:'';},
   guestcam:(d,T)=>card(d,`<div class="ih">${title(d,'guestcam',T.guestcam)}</div><p class="c-text small">${T.camText}</p>
     <div class="camrow"><label class="ipill">${ic('cam')}${T.snap}<input type="file" accept="image/*" capture="environment" data-cam hidden></label><label class="ipill ghost">${ic('img')}${T.pick}<input type="file" accept="image/*" multiple data-cam hidden></label></div>
@@ -145,13 +140,20 @@ function bookHTML(d,lang='ar'){
   return `<div class="book" style="--n:${n}">${pages.map((p,i)=>i===0?p.replace('data-i="0"',`data-i="0" style="z-index:${n}"`):`<div class="pg" data-i="${i}" style="z-index:${n-i}">${p}<span class="pgno">${digits(i)}</span></div>`).join('')}
     <div class="bnav"><button type="button" data-act="prev" aria-label="${T.prev}">${ic('chev')}</button><span class="bdots">${pages.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span><button type="button" data-act="next" aria-label="${T.next}" class="nx">${ic('chev')}</button></div></div>`;
 }
+const INTRO_DIR='assets/intro/';
+/* the surface the envelope rests on: the design photo softened, otherwise satin or warm bokeh */
+const surface=d=>safeImg(d.photo)&&d.photoMode!=='none'?d.photo:BG_DIR+(isLight(d.bg)?'candles-flowers':'gold-bokeh')+'.webp';
+const velvet=d=>{const h=hex(d.door).slice(1);const [r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)||0);return r*.3+g*.59+b*.11<45&&Math.max(r,g,b)-Math.min(r,g,b)<30?'#7a0f1c':hex(d.door);};
+function sealHTML(d,T,initial){
+  return `<button class="wax" type="button" data-open aria-label="${T.open}"><i class="wx"></i><i class="wr"></i><b>${initial}</b></button>`;
+}
 function introHTML(d,lang){
-  const T=L[lang]||L.ar,initial=esc((d.name||'ب').trim().charAt(0));
-  const wax=`<button class="wax" type="button" data-open aria-label="${T.open}">${waxSVG()}<b>${initial}</b></button><div class="hint">${T.open}</div>`;
-  const orn=`<div class="orn"><div class="mask tn-gold" style="--m:url(${ART_DIR}mandala-c.webp);aspect-ratio:1"></div></div>`;
-  if(d.intro==='doors')return `<div class="intro intro-doors"><div class="door l">${orn}</div><div class="door r">${orn}</div>${wax}</div>`;
-  if(d.intro==='curtain')return `<div class="intro intro-curtain" style="--hc:#fff"><div class="cur l"></div><div class="cur r"></div><div class="valance"></div>${wax}</div>`;
-  if(d.intro==='envelope')return `<div class="intro intro-env"><div class="env-b"></div><div class="env-t"></div>${wax}</div>`;
+  const T=L[lang]||L.ar,initial=esc((d.mono||d.name||'ب').trim().charAt(0));
+  const wax=sealHTML(d,T,initial),hint=`<div class="hint">${T.open}</div>`;
+  if(d.intro==='doors')return `<div class="intro intro-doors"><div class="glow"></div><div class="door l"><i></i></div><div class="door r"><i></i></div>${wax}${hint}</div>`;
+  if(d.intro==='curtain')return `<div class="intro intro-curtain" style="--hc:#fff;--vc:${velvet(d)}"><div class="cur l"></div><div class="cur r"></div><div class="valance"></div><div class="spot"></div>${wax}${hint}</div>`;
+  if(d.intro==='envelope')return `<div class="intro intro-env" style="--hc:#fff"><div class="env-surf" style="background-image:url('${esc(surface(d))}')"></div>
+    <div class="env"><div class="env-back"></div><div class="env-letter"><small>${esc(d.sub||'')}</small><b class="${metal(d)}">${esc(d.name)}</b><span></span></div><div class="env-front"></div><div class="env-flap"><i></i></div>${wax}</div>${hint}</div>`;
   if(d.intro==='box')return `<div class="intro intro-box" style="--hc:${hex(d.card)}"><button class="gb" type="button" data-open aria-label="${T.open}">${giftBoxSVG()}</button><p>${T.gift}</p><div class="hint">${T.tapBox}</div></div>`;
   return'';
 }
@@ -280,7 +282,7 @@ setInterval(()=>frames.forEach(f=>tickCountdowns(f)),1000);
 let audioEl=null,musicFrame=null,ytPlayer=null,ytReady=null,ytOk=false,ytQueued=null;
 const isYT=m=>String(m||'').startsWith('yt:');
 const ytId=m=>isYT(m)?m.slice(3).replace(/[^\w-]/g,''):'';
-function trackSrc(m){m=String(m||'');const k=m.replace(/^trk:/,'');if(TRACKS[k])return MUS_DIR+k+'.mp3';if(/^data:audio\//.test(m))return m;if(m.startsWith('url:'))return safeUrl(m.slice(4));return'';}
+function trackSrc(m){m=String(m||'');if(/^data:audio\//.test(m))return m;if(m.startsWith('url:'))return safeUrl(m.slice(4));return'';}
 function setMusicUI(f,on){
   if(!f)return;$$('.dock [data-act=music]',f).forEach(b=>b.setAttribute('aria-pressed',on?'true':'false'));
   $$('.sec-song .ipill',f).forEach(b=>{const T=L[f.dataset.lang]||L.ar;b.innerHTML=on?ic('pause')+T.pause:ic('play')+T.play;});
@@ -309,25 +311,25 @@ function prepareMusic(d){
     $('#ytbox').innerHTML='<div id="ytp"></div>';ytPlayer=new YT.Player('ytp',opts);
   }).catch(()=>{});
 }
-function playFallback(d,f){
-  const src=trackSrc(d.music)||(MUS_DIR+(FALLBACK[d.cat]||'love_piano')+'.mp3');
+/* uploaded file or direct link */
+function playFile(d,f){
+  const src=trackSrc(d.music);if(!src){setMusicUI(f,false);return;}
   const a=new Audio(src);a.loop=true;a.volume=.85;audioEl=a;musicFrame=f;
-  if(!isYT(d.music)&&+d.musicStart)a.addEventListener('loadedmetadata',()=>{try{a.currentTime=+d.musicStart}catch(e){}},{once:true});
+  if(+d.musicStart)a.addEventListener('loadedmetadata',()=>{try{a.currentTime=+d.musicStart}catch(e){}},{once:true});
   a.play().then(()=>{if(audioEl===a)setMusicUI(f,true);}).catch(()=>{if(audioEl===a){audioEl=null;musicFrame=null;setMusicUI(f,false);}});
 }
+function musicNote(f,txt){const mp=f&&$('.mpill',f);if(mp)mp.innerHTML=`${ic('music')}<span>${txt}</span>`;}
 function playMusic(d,f){
   stopMusic();
-  if(isYT(d.music)){
-    musicFrame=f;
-    const go=()=>{try{ytPlayer.seekTo(+d.musicStart||0,true);ytPlayer.playVideo();setMusicUI(f,true);
-      setTimeout(()=>{if(musicFrame===f&&ytPlayer.getPlayerState?.()!==1){try{ytPlayer.pauseVideo()}catch(e){}musicFrame=null;playFallback(d,f);}},2500);}catch(e){musicFrame=null;playFallback(d,f);}};
-    if(ytOk&&ytPlayer?.playVideo){go();return;}
-    /* YouTube isn't reachable here (offline or a sandboxed preview): play the built-in track instead */
-    musicFrame=null;playFallback(d,f);
-    loadYT().catch(()=>{});
-    return;
-  }
-  playFallback(d,f);
+  if(!isYT(d.music)){playFile(d,f);return;}
+  musicFrame=f;
+  const go=()=>{if(musicFrame!==f)return;try{ytPlayer.seekTo(+d.musicStart||0,true);ytPlayer.playVideo();setMusicUI(f,true);
+    /* the browser refused to start sound without a tap: let the guest tap the pill */
+    setTimeout(()=>{if(musicFrame===f&&ytPlayer.getPlayerState?.()!==1){musicFrame=null;setMusicUI(f,false);}},3000);}catch(e){musicFrame=null;setMusicUI(f,false);}};
+  if(ytOk&&ytPlayer?.playVideo){go();return;}
+  const T=L[f?.dataset.lang]||L.ar;musicNote(f,T.loading);
+  ytQueued=go;prepareMusic(d);
+  loadYT().catch(()=>{if(musicFrame===f){musicFrame=null;ytQueued=null;musicNote(f,T.noYT);}});
 }
 function toggleMusic(d,f){if(musicFrame===f){stopMusic();return;}if(!d.music){toast('ما مضاف موسيقى لهاي الهدية');return;}playMusic(d,f);}
 /* ---------- effects: a burst when the gift opens, then gentle gold dust ---------- */

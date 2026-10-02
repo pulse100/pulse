@@ -1,7 +1,7 @@
 /* =========================================================
    برمجتي — البيانات: الأقسام، الألوان، الرسوم، الأغاني، التصاميم
    ========================================================= */
-const LS_KEY = 'barmajti:data:v4';
+const LS_KEY = 'barmajti:data:v5';
 const IG_DEFAULT = 'barmgte';
 
 /* ---------- helpers shared by every file ---------- */
@@ -20,8 +20,8 @@ function toast(msg){$$('.toast').forEach(t=>t.remove());const t=document.createE
 function isLight(h){h=hex(h).slice(1);if(h.length===3)h=h.split('').map(c=>c+c).join('');const [r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16));return (r*299+g*587+b*114)/1000>150;}
 
 /* ---------- categories ---------- */
-const CATS = {wed:'حفل زفاف', eng:'خطوبة وملكة', henna:'ليلة الحنّة', shower:'حفلة العروس', reveal:'كشف جنس المولود', baby:'استقبال مولود', grad:'حفل تخرّج', bday:'عيد ميلاد', val:'عيد الحب', love:'رسائل حب', occ:'أعياد ومناسبات'};
-const SLUGS = {wedding:'wed', engagement:'eng', henna:'henna', 'bridal-shower':'shower', 'gender-reveal':'reveal', baby:'baby', graduation:'grad', birthday:'bday', valentine:'val', love:'love', occasions:'occ'};
+const CATS = {wed:'حفل زفاف', eng:'خطوبة وملكة', henna:'ليلة الحنّة', shower:'حفلة العروس', reveal:'كشف جنس المولود', baby:'استقبال مولود', grad:'حفل تخرّج', bday:'عيد ميلاد', occ:'أعياد ومناسبات'};
+const SLUGS = {wedding:'wed', engagement:'eng', henna:'henna', 'bridal-shower':'shower', 'gender-reveal':'reveal', baby:'baby', graduation:'grad', birthday:'bday', occasions:'occ'};
 const THEMES = {paper:'ورق وألوان مائية', marble:'رخام', velvet:'مخمل', night:'ليل ونجوم', pastel:'سماء ناعمة'};
 const PHOTO_MODES = {none:'بدون صورة', band:'شريط فوق', full:'خلفية كاملة', arch:'نافذة محراب', circle:'دائرة'};
 const FRAMES = {none:'بدون', arch:'محراب', oval:'بيضاوي', double:'إطار مزدوج'};
@@ -67,6 +67,11 @@ const ART = {
 };
 /* real CC0 photographs (StockSnap) used behind the hero */
 const BGS = {
+  'aisle-flowers':'ممر ورد','aisle-ribbons':'ممر بشرائط','palace-hall':'قصر وثريا','chandelier-gold':'ثريا ذهبية','chandelier-dark':'ثريا كريستال',
+  'table-flowers':'طاولة ورد','table-roses':'طاولة زفاف','table-white':'طاولة بيضاء','candles-flowers':'شموع وورد','candle-dinner':'عشاء بالشموع','garden-table':'حديقة',
+  'bouquet-roses':'باقة ورد','bouquet-lace':'باقة ودانتيل','bouquet-dress':'باقة العروس','rings-petals':'خاتم وبتلات','rose-white-red':'ورد أبيض وأحمر','couple-bouquet':'العروسين',
+  'gold-bokeh':'لمعة ذهبية','gold-glitter':'جليتر ذهبي','gold-drape':'ستارة ذهبية','satin-red':'ستان أحمر','satin-purple':'ستان بنفسجي','fairy-lights':'أضواء ناعمة',
+  'lantern':'فانوس','lantern-market':'فوانيس','mosque-hall':'مسجد','red-door':'باب تراثي',
   'roses-red-wall':'جدار ورد أحمر','roses-pink-soft':'ورد وردي ناعم','roses-white-paper':'ورد أبيض','rose-red-dark':'وردة حمراء','rose-white-dark':'وردة بيضاء','rose-petals':'بتلات ورد','rose-ring':'وردة ذهبية',
   'rings-navy':'خواتم على كحلي','rings-wood':'خواتم على خشب','hands-ring':'يدين وخاتم','lace':'دانتيل','wedding-cake':'كيكة زفاف',
   'gold-lights':'أضواء ذهبية','sparkler':'شرارة','night-bokeh':'أضواء ليلية','confetti-party':'حفلة',
@@ -79,53 +84,37 @@ const BGS = {
 };
 
 /* ---------- music ---------- */
-const MUS_DIR='assets/music/';
-/* built in: composed for Barmajti (FluidR3 GM, MIT) + CC0 music boxes. Always plays, even offline */
-const TRACKS = {
-  bday_party:{n:'سنة حلوة — Happy Birthday بالأوركسترا'}, bday_box:{n:'Happy Birthday — صندوق موسيقى'},
-  grad_march:{n:'مارش التخرّج'}, love_piano:{n:'بيانو رومانسي'}, wed_canon:{n:'كانون باخلبل — زفاف'},
-  baby_lullaby:{n:'تهويدة النجوم'}, baby_box:{n:'تهويدة صندوق موسيقى'}, eid_hijaz:{n:'مقام حجاز — عود وإيقاع'}
-};
-const FALLBACK = {wed:'wed_canon',eng:'love_piano',henna:'eid_hijaz',shower:'love_piano',reveal:'baby_box',baby:'baby_lullaby',grad:'grad_march',bday:'bday_party',val:'love_piano',love:'love_piano',occ:'eid_hijaz'};
 /* song library played from official YouTube videos (same songs used by event-invitation sites in the region) */
 const SONGS = [
-  ['IdneKLhsWOQ','Wildest Dreams — Taylor Swift','wed eng shower grad bday henna reveal baby',0],
-  ['CI6dnkoHXgk','نانسي عجرم — عيد ميلاد','bday',0],
-  ['TbdnJce0hwM','خالد عسيري — Happy Birthday','bday',0],
-  ['wqdV1ybjzOE','Happy Birthday — بيانو','bday',7],
-  ['jbF4xfdDezE','إليسا — بكرة بتشرق شمس العيد','bday reveal baby occ',0],
-  ['Jb4ReXtJhZE','بلقيس — أهلاً يا ماما','baby',0],
-  ['ozYMAIiymjM','كارمن سليمان — حاسة بسعادة','reveal baby',0],
-  ['XiYdE7KGMU0','حمود الخضر — مستنّيك','reveal baby',0],
-  ['SGOQhgKeJAc','شيمي — قشعريرة','reveal baby',0],
-  ['0BzDolDLqhE','فرقة حنة — ليلة حنة','henna',0],
-  ['_g_xctm0Ojc','صفاء وهناء — ليلة الحنة','henna',0],
-  ['6jkFPCH6TFQ','نداء شرارة — ومعاك','henna',0],
-  ['kp977MhGUVs','هدى عربي — مافي داعي','henna',0],
-  ['akcJI2JYryA','عصام العمر — العروس غزالة','shower',0],
-  ['vrwVkS_bT8c','تامر حسني — سجل يا تاريخ','shower',5],
-  ['8mYeTuzBQr4','Aaj Sajeya','shower wed',10],
-  ['FSYluwsHA-Q','ماجد المهندس — زفة فاز بها','wed',0],
+  ['IdneKLhsWOQ','Wildest Dreams — Taylor Swift','wed eng shower grad bday henna reveal baby occ',0],
   ['qNvJnYLaT5s','زينة عماد — زفة هب السعد','wed eng',0],
-  ['ufeDeq4pHbI','حسين الجسمي — بسم خالق الحب نبدأ','wed eng',0],
-  ['PrPi2hZCPn0','عبدالمجيد عبدالله — إنتي وبس','wed eng val love',0],
-  ['3B5BG1o-sdU','Enchanted — Bridgerton Strings','wed eng shower val',0],
-  ['vGJTaP6anOU',"Can't Help Falling in Love — Elvis",'wed eng shower val love',0],
-  ['V1Pl8CzNzCw','Lovely — Billie Eilish & Khalid','wed eng val love',0],
-  ['2Vv-BfVoq4g','Perfect — Ed Sheeran','wed eng val love',0],
-  ['450p7goxZqg','All of Me — John Legend','wed eng val love',0],
+  ['V1Pl8CzNzCw','Lovely — Billie Eilish & Khalid (Cover)','wed eng',0],
+  ['PrPi2hZCPn0','عبدالمجيد عبدالله — إنتي وبس','wed eng',0],
+  ['FSYluwsHA-Q','ماجد المهندس — زفة فاز بها','wed',0],
+  ['3B5BG1o-sdU','Enchanted — Bridgerton','wed eng shower',0],
+  ['ufeDeq4pHbI','بسم خالق الحب نبدأ','wed eng',0],
+  ['vGJTaP6anOU',"Can't Help Falling in Love — Elvis Presley",'wed eng shower',0],
   ['c2ZOc3UJXPY','Ordinary — Saxophone','wed eng grad',0],
+  ['8mYeTuzBQr4','Aaj Sajeya','shower wed',10],
+  ['kp977MhGUVs','هدى عربي','henna',0],
+  ['6jkFPCH6TFQ','نداء شرارة','henna',0],
+  ['_g_xctm0Ojc','ليلة الحناء','henna',0],
+  ['0BzDolDLqhE','ليلة حنة — فرقة حنة','henna',0],
+  ['vrwVkS_bT8c','تامر حسني — سجل يا تاريخ','shower',5],
+  ['akcJI2JYryA','عصام العمر — العروس غزالة','shower',0],
+  ['SGOQhgKeJAc','Scheme — قشعريرة','reveal baby',0],
+  ['jbF4xfdDezE','إليسا — بكرة بتشرق شمس العيد','reveal bday baby occ',0],
+  ['XiYdE7KGMU0','حمود الخضر — مستنّيك','reveal',0],
+  ['ozYMAIiymjM','كارمن سليمان — حاسة بسعادة','reveal baby',0],
+  ['Jb4ReXtJhZE','بلقيس — أهلاً يا ماما','baby',0],
+  ['7maJOI3QMu0','River Flows in You — Yiruma','grad',2],
   ['WT_RqJZ9s3s','زينة عماد — نجحنا وتخرجنا','grad',24],
-  ['nFvElOX4JjQ','سلطان المرشد — النهايات السعيدة','grad',0],
+  ['nFvElOX4JjQ','النهايات السعيدة','grad',0],
   ['SC4xMk98Pdc','Congratulations — Post Malone','grad',0],
   ['Z-zvV5Bsshc','You Raise Me Up — Violin','grad',0],
-  ['7maJOI3QMu0','River Flows in You — Yiruma','grad val love',2],
-  ['QUBvVTNRp4Q','حسين الجسمي — بشرة خير','occ grad',0],
-  ['kEpOv49P6Yg','كاظم الساهر — أحبيني بلا عقد','val love',0],
-  ['H1soozx2A_Y','كاظم الساهر — إني خيرتك فاختاري','val love',0],
-  ['nzbd8Zra2cY','ماجد المهندس — انسى','val love',0],
-  ['xVU1hOGh6yE','تامر حسني — نور عيني','val love',0],
-  ['6QBoGiGiTwE','محمد عبده — الأماكن','occ',0]
+  ['TbdnJce0hwM','خالد عسيري — Happy Birthday','bday',0],
+  ['wqdV1ybjzOE','Birthday Song — Piano','bday',7],
+  ['CI6dnkoHXgk','نانسي عجرم — عيد ميلاد','bday',0]
 ].map(([id,n,c,s])=>({id,n,c:c.split(' '),s}));
 const songById = id => SONGS.find(s=>s.id===id);
 const songsFor = cat => SONGS.filter(s=>s.c.includes(cat));
@@ -177,35 +166,33 @@ const applyPal = k => {const p=PAL[k]||PAL.ivoryGold;const o={pal:k};palKeys.for
 
 /* ---------- invitation sections ---------- */
 const SECTIONS = {
-  card:'بطاقة الدعوة', family:'أهل المناسبة', message:'كلمة شخصية', quote:'آية أو بيت شعر', album:'ألبوم الصور', story:'قصتنا / ذكرياتنا',
-  reasons:'ليش أحبك', song:'أغنية تذكرني بيك', venue:'الموقع', calendar:'التقويم', countdown:'العد التنازلي', program:'برنامج المناسبة',
-  details:'التعليمات', dress:'لون اللبس', video:'فيديو', guestcam:'كاميرا الضيوف', wishes:'جدار التهاني', attend:'عدد الحضور',
+  card:'بطاقة الدعوة', family:'أهل المناسبة', message:'كلمة شخصية', quote:'آية أو بيت شعر', album:'ألبوم الصور',
+  venue:'الموقع', calendar:'التقويم', countdown:'العد التنازلي', program:'برنامج المناسبة',
+  details:'التعليمات', video:'فيديو', guestcam:'كاميرا الضيوف', wishes:'جدار التهاني', attend:'عدد الحضور',
   qr:'رمز QR', contacts:'للتواصل', closing:'كلمة الختام'
 };
 const ORDER = {
-  wed:['card','family','album','venue','calendar','countdown','program','details','dress','story','message','guestcam','wishes','attend','qr','closing'],
-  eng:['card','family','venue','calendar','countdown','program','details','dress','message','guestcam','wishes','attend','closing'],
-  henna:['card','family','venue','calendar','countdown','program','details','dress','guestcam','wishes','attend','closing'],
-  shower:['card','venue','calendar','countdown','program','details','dress','guestcam','wishes','attend','closing'],
-  reveal:['card','venue','calendar','countdown','details','dress','guestcam','wishes','attend','closing'],
+  wed:['card','family','album','venue','calendar','countdown','program','details','message','guestcam','wishes','attend','qr','closing'],
+  eng:['card','family','venue','calendar','countdown','program','details','message','guestcam','wishes','attend','closing'],
+  henna:['card','family','venue','calendar','countdown','program','details','guestcam','wishes','attend','closing'],
+  shower:['card','venue','calendar','countdown','program','details','guestcam','wishes','attend','closing'],
+  reveal:['card','venue','calendar','countdown','details','guestcam','wishes','attend','closing'],
   baby:['card','family','album','venue','calendar','countdown','details','guestcam','wishes','closing'],
   grad:['card','family','album','venue','calendar','countdown','program','details','message','guestcam','wishes','attend','closing'],
-  bday:['card','album','venue','calendar','countdown','program','details','dress','guestcam','wishes','attend','closing'],
-  val:['card','song','reasons','story','album','message','quote','closing'],
-  love:['card','quote','song','album','reasons','closing'],
+  bday:['card','album','venue','calendar','countdown','program','details','guestcam','wishes','attend','closing'],
   occ:['card','quote','album','message','wishes','closing']
 };
 
 /* ---------- labels ---------- */
 const L = {
   ar:{open:'اضغط للفتح',gift:'وصلتك هدية',tapBox:'اضغط على الصندوق',time:'الساعة',where:'الموقع',where2:'الموقع الثاني',map:'افتح الخريطة',save:'احفظ الموعد',count:'العد التنازلي',d:'أيام',h:'ساعات',m:'دقائق',s:'ثواني',
-    prog:'برنامج المناسبة',det:'التعليمات',wishes:'جدار التهاني',album:'ألبوم الصور',contact:'تواصل',music:'موسيقى',wish:'تهنئة',rsvp:'تأكيد الحضور',playing:'الموسيقى تشتغل',tap:'اضغط لتشغيل الموسيقى',
+    prog:'برنامج المناسبة',det:'التعليمات',wishes:'جدار التهاني',album:'ألبوم الصور',contact:'تواصل',music:'موسيقى',wish:'تهنئة',rsvp:'تأكيد الحضور',loading:'جاري تحميل الأغنية…',noYT:'الأغنية تشتغل بالرابط المنشور',playing:'الموسيقى تشتغل',tap:'اضغط لتشغيل الموسيقى',
     made:'صُنعت بحب في برمجتي',yourName:'اسمك',yes:'أكيد جاي',no:'أعتذر',sendR:'أرسل الرد',sendW:'أرسل التهنئة',writeW:'اكتب تهنئتك',close:'إغلاق',guests:'عدد الأشخاص',lang:'EN',
     family:'بدعوة من',message:'كلمة من القلب',story:'قصتنا',reasons:'ليش أحبك انت بالذات',song:'أغنية تذكرني بيك',dress:'لون اللبس',video:'شاهد الفيديو',guestcam:'كاميرا الضيوف',
     camText:'التقط صورة من الحفل، وتنحفظ هنا ويشوفها الكل',snap:'التقط صورة',pick:'من المعرض',attend:'عدد الحضور',attendNote:'شخص أكدوا حضورهم',qr:'امسح الرمز وشارك الدعوة',contacts:'للتواصل',
     noWishes:'كون أول واحد يكتب تهنئة',noPhotos:'ماكو صور بعد، صوّر أول لقطة',saved:'انحفظت الصورة',hijri:'',next:'التالي',prev:'السابق',play:'شغّل الأغنية',pause:'وقّف',page:'صفحة'},
   en:{open:'TAP TO OPEN',gift:'A gift for you',tapBox:'Tap the box',time:'Time',where:'Location',where2:'Second location',map:'Open map',save:'Save the date',count:'Countdown',d:'Days',h:'Hours',m:'Minutes',s:'Seconds',
-    prog:'Programme',det:'Details',wishes:'Wishes',album:'Album',contact:'Contact',music:'Music',wish:'Wish',rsvp:'RSVP',playing:'Music on',tap:'Tap to start music',
+    prog:'Programme',det:'Details',wishes:'Wishes',album:'Album',contact:'Contact',music:'Music',wish:'Wish',rsvp:'RSVP',loading:'Loading the song…',noYT:'The song plays on the published link',playing:'Music on',tap:'Tap to start music',
     made:'Made with love by Barmajti',yourName:'Your name',yes:'Attending',no:'Can\'t make it',sendR:'Send reply',sendW:'Send wish',writeW:'Write a wish',close:'Close',guests:'Guests',lang:'ع',
     family:'Hosted by',message:'From the heart',story:'Our story',reasons:'Why I love you',song:'Our song',dress:'Dress code',video:'Watch the video',guestcam:'Guest camera',
     camText:'Snap a photo at the party — it is saved here for everyone',snap:'Take a photo',pick:'From gallery',attend:'Guests attending',attendNote:'people confirmed',qr:'Scan to share the invitation',contacts:'Contact',
@@ -218,7 +205,7 @@ const base={show:true,feat:false,pop:0,layout:'scroll',theme:'paper',photo:'',ph
   metal:'gold',mono:'',ms:1,my:24,mo:.9,fName:'Aref Ruqaa',fTitle:'Great Vibes',fBody:'IBM Plex Sans Arabic',ns:1,ts:1,
   bg:'#f8f3ea',card:'#fffdf8',ink:'#3a2d22',acc:'#b08a4a',acc2:'#eadfcd',door:'#efe4d2',wax:'#9b6b26',pal:'ivoryGold',
   title:'',name:'',sub:'',cardTitle:'',invite:'',date:'',time:'',hijri:false,venue:'',map:'',venue2:'',map2:'',program:[],details:[],closing:'',
-  family:[],msgTitle:'',msgBody:'',msgSign:'',quote:'',quoteSrc:'',story:[],reasons:[],songNote:'',dressText:'',dressColors:[],video:'',contacts:[],
+  family:[],msgTitle:'',msgBody:'',msgSign:'',quote:'',quoteSrc:'',video:'',contacts:[],
   wishes:[],photos:[],img:'',layers:[],corners:'gold',host:'',attendBase:0,titles:{},sections:null};
 
 /* ---------- layer presets ---------- */
@@ -270,7 +257,7 @@ const TX = {
   wed:{names:['محمد و هدى','علي و زينب','حيدر و نور','مصطفى و سارة','يوسف و مريم','أحمد و رقية','عمر و ليان','كرار و فاطمة'],sub:'بكل الحب ندعوكم',cardTitle:'The Wedding',
     invite:'بقلوب ملؤها الفرح والسرور\nنتشرف بدعوتكم لحضور حفل زفافنا\nوحضوركم يكمّل فرحتنا',venue:'قاعة الماسة — بغداد',details:['الدخول بالدعوة فقط','يرجى تأكيد الحضور','فعالية للكبار فقط'],
     family:[['أهل العريس','الحاج جاسم محمد وعائلته'],['أهل العروس','الحاج كريم عبدالله وعائلته']],closing:'حضوركم يكمّل فرحتنا',dressText:'نتمنى من الضيوف اختيار ألوان هادئة',
-    story:[['٢٠٢٢','أول لقاء'],['٢٠٢٤','الخطوبة'],['٢٠٢٦','بداية العمر سوا']],msgTitle:'من القلب',msgBody:'شكراً لأنكم جزء من أجمل يوم بحياتنا',quote:'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا',quoteSrc:'سورة الروم',
+   msgTitle:'من القلب',msgBody:'شكراً لأنكم جزء من أجمل يوم بحياتنا',quote:'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا',quoteSrc:'سورة الروم',
     wishes:['أم علي: ألف مبروك وعقبال الذرية الصالحة','سارة: الله يتمم عليكم بخير']},
   eng:{names:['حسين و رقية','علي و آية','زيد و نبأ','باقر و زهراء','مرتضى و رسل'],sub:'حفل خطوبة',cardTitle:'Engaged',invite:'جمعنا الله على خير\nونتمنى تشاركونا فرحتنا',venue:'قاعة اللؤلؤة',details:['يرجى تأكيد الحضور'],
     family:[['بدعوة من','عائلتي العروسين']],closing:'وعقبال الفرحة الكبيرة',msgTitle:'',msgBody:'',quote:'',wishes:['ريم: مبروك يا أحلى عروس']},
@@ -285,13 +272,6 @@ const TX = {
     details:['يرجى تأكيد الحضور','اللبس الرسمي'],family:[['بحضور','عائلتي وأصدقائي']],closing:'كل نجاح إلي هو إلكم',msgTitle:'شكر',msgBody:'لأمي وأبوي، كل خطوة كانت بدعائكم',wishes:['بابا: فخورين بيك يا بطل']},
   bday:{names:['لُجين','ليان','يوسف','رُبى','تيم','جود','حسن','ملك','آدم','نور'],sub:'حفل عيد ميلاد',cardTitle:'Happy Birthday',invite:'لأن فرحتي تكبر بوجودكم\nأدعوكم لمشاركتي حفل ميلادي',venue:'قاعة الياسمين — بغداد',
     details:['يرجى تأكيد الحضور','فعالية عائلية'],closing:'شكراً لأنكم جزء من فرحتي',dressText:'',wishes:['ماما: كل عام وأنتِ أحلى','ريم: سنة حلوة يا جميل']},
-  val:{names:['كتاب ذكرياتنا','إلى حبيبي','إلى نور عيني','لك وحدك','أحمد و زينب'],sub:'عيد حب سعيد',cardTitle:'رسالة حب',invite:'لو أكتب كل يوم ما يكفي الورق\nفخليت هذا الكتاب يحكي عنّا',
-    reasons:['لأنك أول واحد يفرح لفرحي','لأن ضحكتك تخلي يومي أحلى','لأنك تفهمني بدون ما أحچي','لأنك بيتي وأماني'],songNote:'كل ما أسمعها أتذكرك',
-    story:[['أول لقاء','يوم ما نساه أبد'],['أول هدية','وردة حمراء لساتني محتفظة بيها'],['أحلى سفرة','البحر والغروب وانت'],['اليوم','كل يوم وياك عيد']],
-    msgTitle:'وعد',msgBody:'أوعدك أبقى وياك بكل أيامك',quote:'وفي عينيك ألف حكاية وحكاية',quoteSrc:'',closing:'أحبك اليوم وكل يوم',
-    photos:['assets/bg/rose-ring.webp','assets/bg/hands-ring.webp','assets/bg/roses-pink-soft.webp','assets/bg/tulips.webp']},
-  love:{names:['إلى نور','سارة','إلى حبيبتي','لك وحدك','إلى أمي'],sub:'رسالة من القلب',cardTitle:'أحبك',invite:'لو أكتب كل يوم ما يكفي الورق\nفخليتها كلمة وحدة تختصر كلشي',
-    reasons:['لأنك انت','لأن وياك كلشي أحلى'],songNote:'أغنيتنا',quote:'وأحبك حتى آخر نبضة',closing:'لك وحدك، اليوم وكل يوم'},
   occ:{names:['عيدكم مبارك','رمضان كريم','عيد أضحى مبارك','سنة جديدة سعيدة','جمعة مباركة','مبروك البيت الجديد','ألف مبروك النجاح','حمدلله على السلامة'],sub:'تهنئة',cardTitle:'كل عام وأنتم بخير',
     invite:'تقبّل الله طاعاتكم\nوأعاده عليكم بالصحة واللمّة الحلوة',closing:'عائلة أبو علي',quote:'',msgTitle:'',msgBody:''}
 };
@@ -299,6 +279,21 @@ const TX = {
 /* ---------- looks: [title, palette, theme, photo, photoMode, layers(preset,arg), intro, fonts, metal, frame, fx, extra] ---------- */
 const LOOKS = {
   wed:[
+    ['ممر الورد','champagne','paper','aisle-flowers','full',['none'],'envelope','ruqaa','gold','none','petals'],
+    ['قصر الثريا','blackGold','velvet','palace-hall','full',['sparkles','gold'],'curtain','ruqaa','gold','none','gold'],
+    ['ثريا ذهبية','blackGold','night','chandelier-gold','full',['none'],'doors','qahiri','gold','none','gold'],
+    ['شموع وورد','blushGold','paper','candles-flowers','band',['none'],'envelope','nastaliq','rose','none','petals',{corners:'rose'}],
+    ['طاولة الورد','sageIvory','paper','table-flowers','full',['none'],'envelope','naskh','gold','none','petals'],
+    ['باقة العروس','ivoryGold','paper','bouquet-roses','arch',['baroque','gold'],'envelope','ruqaa','gold','none','petals'],
+    ['دانتيل وورد','champagne','marble','bouquet-lace','band',['none'],'doors','nastaliq','gold','none','petals'],
+    ['خواتم وبتلات','burgundyGold','velvet','rings-petals','circle',['sparkles','gold'],'curtain','mirza','gold','none','petals'],
+    ['عشاء الشموع','blackGold','night','candle-dinner','band',['sparkles','gold'],'doors','ruqaa','gold','none','gold'],
+    ['ثريا كريستال','navyGold','night','chandelier-dark','full',['none'],'curtain','nastaliqUrdu','gold','none','stars'],
+    ['ممر الشرائط','silverWhite','marble','aisle-ribbons','full',['none'],'envelope','ruqaa','silver','none','petals',{corners:'silver'}],
+    ['حديقة الزفاف','sageIvory','paper','garden-table','band',['none'],'doors','naskh','gold','none','petals'],
+    ['ستان خمري','wine','velvet','satin-red','full',['baroque','gold'],'curtain','ruqaa','gold','none','petals'],
+    ['زفاف بنفسجي','plumNight','velvet','satin-purple','full',['sparkles','gold'],'curtain','mirza','gold','none','gold'],
+    ['العروسين','champagne','paper','couple-bouquet','band',['none'],'envelope','nastaliq','gold','none','petals'],
     ['زفاف ملكي','burgundyGold','velvet','','none',['candelabra','gold'],'curtain','ruqaa','gold','none','petals',{mono:'م',mo:.14,my:20}],
     ['ورد أحمر','burgundyGold','velvet','roses-red-wall','band',['sparkles','gold'],'doors','ruqaa','gold','none','petals'],
     ['زفاف أبيض','silverWhite','marble','','none',['dove','silver'],'doors','ruqaa','silver','arch','petals',{corners:'silver'}],
@@ -338,6 +333,8 @@ const LOOKS = {
     ['زهر الكرز','blushGold','pastel','cherry-white','band',['sparkles','gold'],'envelope','nastaliq','gold','none','petals']
   ],
   henna:[
+    ['فانوس الحنّة','henna','night','lantern','full',['none'],'doors','ruqaa','gold','none','gold'],
+    ['سوق الفوانيس','emeraldGold','night','lantern-market','band',['lanterns','gold'],'curtain','ruqaa','gold','none','stars'],
     ['ليلة الحنّة','emeraldGold','velvet','','none',['mandala','gold'],'curtain','ruqaa','gold','none','gold'],
     ['حنّة حمراء','henna','velvet','','none',['mandalaRoses','gold'],'curtain','ruqaa','gold','arch','gold',{mono:'ح',mo:.12}],
     ['ماندالا ذهبية','blackGold','night','','none',['mandala','gold'],'doors','qahiri','gold','none','stars'],
@@ -393,6 +390,8 @@ const LOOKS = {
     ['مشمشي','coral','paper','','none',['diplomaBow'],'box','fun','acc','none','confetti',{corners:'acc'}]
   ],
   bday:[
+    ['أضواء الحفلة','blackGold','night','fairy-lights','band',['balloonsGold'],'box','ruqaa','gold','none','confetti'],
+    ['ستارة ذهبية','blackGold','velvet','gold-drape','band',['sparkles','gold'],'curtain','vibes','gold','none','gold'],
     ['بالونات ذهبية','ivoryGold','paper','','none',['balloonsGold'],'doors','ruqaa','gold','none','gold'],
     ['وردي ناعم','babyPink','paper','','none',['balloonsRose'],'envelope','nastaliq','rose','none','hearts',{corners:'rose'}],
     ['عيد ميلاد طفل','babyBlue','pastel','','none',['balloonsMix'],'box','fun','acc','none','balloons',{corners:'acc'}],
@@ -414,27 +413,8 @@ const LOOKS = {
     ['ليلة الأمنيات','navyGold','night','night-bokeh','full',['sparkles','gold'],'doors','mirza','gold','none','stars'],
     ['هدية مغلفة','terracotta','paper','gift-kraft','arch',['none'],'box','nastaliq','acc','none','confetti']
   ],
-  val:[
-    ['كتاب ذكرياتنا','roseRed','paper','rose-petals','band',['heartRose'],'envelope','ruqaa','rose','none','hearts',{layout:'book',corners:'rose'}],
-    ['رسالة حب','wine','velvet','','none',['heartRose'],'envelope','ruqaa','gold','none','hearts',{layout:'book'}],
-    ['أغنية تذكرني بيك','plumNight','night','night-bokeh','full',['moonStars','gold'],'doors','nastaliqUrdu','gold','none','stars',{layout:'book',sectionsFirst:'song'}],
-    ['ليش أحبك انت بالذات','blushGold','paper','','none',['butterflies'],'envelope','nastaliq','rose','none','hearts',{layout:'book',sectionsFirst:'reasons',corners:'rose'}],
-    ['ذكرياتنا','champagne','paper','rose-ring','arch',['sparkles','gold'],'doors','naskh','gold','none','petals',{layout:'book',sectionsFirst:'story'}],
-    ['صور تجمعنا','mauve','paper','pink-roses-soft','full',['none'],'envelope','ruqaa','rose','none','hearts',{layout:'book',sectionsFirst:'album',corners:'rose'}],
-    ['قلب أحمر','roseRed','paper','','none',['heartRose'],'box','fun','acc','none','hearts',{corners:'acc'}],
-    ['وردة حمراء','burgundyGold','velvet','rose-red-dark','band',['sparkles','gold'],'curtain','ruqaa','gold','none','petals'],
-    ['سما وقمر','midnight','night','moon-lake','full',['none'],'doors','nastaliqUrdu','silver','none','stars',{corners:'silver'}],
-    ['توليب الحب','coral','paper','tulips','circle',['butterflies'],'envelope','ruqaa','acc','none','hearts',{layout:'book'}]
-  ],
-  love:[
-    ['رسالة مختومة','roseRed','paper','','none',['heartRose'],'envelope','ruqaa','rose','none','hearts',{corners:'rose'}],
-    ['قمر وسهر','midnight','night','','none',['moonStars','silver'],'doors','nastaliqUrdu','silver','none','stars',{corners:'silver'}],
-    ['إلى أمي','blushGold','paper','peonies-field','band',['butterflies'],'envelope','nastaliq','rose','none','petals'],
-    ['ذكرى زواجنا','champagne','marble','','none',['rings','gold'],'doors','naskh','gold','oval','petals'],
-    ['وردة بيضاء','blackGold','velvet','rose-white-dark','full',['none'],'doors','ruqaa','gold','none','petals'],
-    ['اعتذار','dustyBlue','paper','white-blossom','band',['none'],'envelope','naskh','acc','none','petals']
-  ],
   occ:[
+    ['رمضان في المسجد','emeraldGold','night','mosque-hall','band',['lanterns','gold'],'doors','ruqaa','gold','none','stars'],
     ['عيدكم مبارك','emeraldGold','night','','none',['lanterns','gold'],'curtain','ruqaa','gold','none','stars'],
     ['رمضان كريم','plumNight','velvet','','none',['ramadan','gold'],'doors','ruqaa','gold','arch','stars'],
     ['عيد الأضحى','navyGold','night','','none',['lanterns','gold'],'doors','qahiri','gold','none','stars'],
@@ -445,7 +425,7 @@ const LOOKS = {
     ['حمدلله على السلامة','dustyBlue','pastel','tulips','circle',['none'],'envelope','nastaliq','acc','none','petals']
   ]
 };
-const CAT_BASE = {wed:100,eng:200,henna:250,shower:300,reveal:350,baby:400,grad:450,bday:500,val:600,love:650,occ:700};
+const CAT_BASE = {wed:100,eng:200,henna:250,shower:300,reveal:350,baby:400,grad:450,bday:500,occ:700};
 const DATES = ['2026-12-18','2027-01-15','2027-02-05','2026-11-27','2027-03-12','2026-12-24','2027-01-29'];
 const TIMES = ['19:30','20:00','18:30','19:00','20:30','17:30'];
 function buildDesigns(){
@@ -455,21 +435,19 @@ function buildDesigns(){
     list.forEach((lk,i)=>{
       const [title,pal,theme,photo,photoMode,[lp,arg],intro,fp,metal,frame,fx,extra={}]=lk;
       const f=FP[fp]||FP.ruqaa,song=songs.length?songs[i%songs.length]:null;
-      const dated=!['love','occ','val'].includes(cat)||cat==='val'&&i===4;
+      const dated=cat!=='occ';
       const d={...structuredClone(base),...applyPal(pal),id:cat+'-'+(i+1),code:'BR-'+(CAT_BASE[cat]+i+1),cat,title,theme,photo:photo?BG_DIR+photo+'.webp':'',photoMode:photo?photoMode:'none',
         layers:LP[lp]?LP[lp](arg):[],intro,fName:f[0],fTitle:f[1],ns:f[2]*(cat==='wed'||cat==='eng'?.82:1),metal,frame,fx,
-        music:song?'yt:'+song.id:'trk:'+FALLBACK[cat],musicStart:song?song.s:0,
+        music:song?'yt:'+song.id:'',musicStart:song?song.s:0,
         name:tx.names[i%tx.names.length],sub:tx.sub,cardTitle:tx.cardTitle,invite:tx.invite,closing:tx.closing||'',
         venue:dated?tx.venue||'':'',date:dated?DATES[i%DATES.length]:'',time:dated?TIMES[i%TIMES.length]:'',
         program:PROG[cat]||[],details:tx.details||[],family:tx.family||[],msgTitle:tx.msgTitle||'',msgBody:tx.msgBody||'',msgSign:'',
-        quote:tx.quote||'',quoteSrc:tx.quoteSrc||'',story:tx.story||[],reasons:tx.reasons||[],songNote:tx.songNote||'',
-        dressText:tx.dressText||'',dressColors:tx.dressText?[PAL[pal][4],PAL[pal][5],PAL[pal][2]]:[],wishes:tx.wishes||[],photos:tx.photos||[],
-        attendBase:dated?[86,140,52,210,64][i%5]:0,pop:(list.length-i)+(i<3?10:0),feat:i===0&&['wed','grad','bday','val','henna','eng'].includes(cat),
+        quote:tx.quote||'',quoteSrc:tx.quoteSrc||'',
+        wishes:tx.wishes||[],photos:tx.photos||[],
+        attendBase:dated?[86,140,52,210,64][i%5]:0,pop:(list.length-i)+(i<3?10:0),feat:i===0&&['wed','grad','bday','henna','eng'].includes(cat),
         sections:[...ORDER[cat]],...extra};
       if(extra.sectionsFirst){d.sections=[extra.sectionsFirst,...d.sections.filter(k=>k!==extra.sectionsFirst)];delete d.sectionsFirst;}
-      if(cat==='val'&&i===4){d.sections=['card','story','album','calendar','countdown','song','reasons','closing'];}
       if(!d.date)d.sections=d.sections.filter(k=>!['venue','calendar','countdown','program','attend','qr'].includes(k));
-      if(cat==='val'||cat==='love'){d.titles={card:'رسالة حب',album:'صور تجمعنا',story:'ذكرياتنا'};}
       out.push(d);
     });
   });

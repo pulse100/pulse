@@ -7,7 +7,7 @@ async function copyText(txt,fallbackEl){
   try{await navigator.clipboard.writeText(txt);toast('تم النسخ');}
   catch(e){if(fallbackEl){const r=document.createRange();r.selectNodeContents(fallbackEl);const s=getSelection();s.removeAllRanges();s.addRange(r);}toast('حدّد النص وانسخه يدوياً');}
 }
-function normalize(v){return{seq:Math.max(v.seq||0,DEFAULTS.seq),settings:{...DEFAULTS.settings,...(v.settings||{})},fonts:v.fonts||[],designs:(v.designs||[]).map(d=>({...structuredClone(base),...d}))};}
+function normalize(v){return{seq:Math.max(v.seq||0,DEFAULTS.seq),settings:{...DEFAULTS.settings,...(v.settings||{})},fonts:v.fonts||[],designs:(v.designs||[]).filter(d=>CATS[d.cat]).map(d=>{const o={...structuredClone(base),...d};if(/^trk:/.test(o.music||'')){const sg=songsFor(o.cat)[0];o.music=sg?'yt:'+sg.id:'';o.musicStart=sg?sg.s:0;}return o;})};}
 
 /* =========================================================
    PUBLIC SITE
@@ -86,7 +86,7 @@ function drawCircuit(){
 
 /* ---------- viewer ---------- */
 function clearLayer(){$$('#layer .frame').forEach(f=>f._cleanup&&f._cleanup());$('#layer').innerHTML='';document.body.style.overflow='';}
-const musicLabel=d=>isYT(d.music)?(songById(ytId(d.music))?.n||'أغنية من يوتيوب'):TRACKS[String(d.music).replace('trk:','')]?.n||(d.music?'أغنية مرفوعة':'بدون موسيقى');
+const musicLabel=d=>isYT(d.music)?(songById(ytId(d.music))?.n||'أغنية من يوتيوب'):(d.music?'أغنية مرفوعة':'بدون موسيقى');
 function openViewer(id,d0){
   const d=d0||DATA.designs.find(x=>x.id===id);if(!d)return;
   clearLayer();
@@ -165,7 +165,7 @@ function openGiftMode(d){
    ========================================================= */
 let tab='list',editing=null;
 const authed=()=>sess.get('barmajti:auth')==='1';
-function blank(){return{...structuredClone(base),...applyPal('ivoryGold'),id:'d'+Date.now().toString(36),code:'',cat:'wed',title:'',name:'الاسم',sub:'',sections:[...ORDER.wed],music:'trk:wed_canon',layers:LP.baroque('gold')};}
+function blank(){return{...structuredClone(base),...applyPal('ivoryGold'),id:'d'+Date.now().toString(36),code:'',cat:'wed',title:'',name:'الاسم',sub:'',sections:[...ORDER.wed],music:'yt:'+songsFor('wed')[0].id,layers:LP.baroque('gold')};}
 function renderAdmin(){
   $('#tabs').hidden=!authed();
   $$('#tabs .tab[data-tab]').forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===tab));
@@ -232,14 +232,10 @@ const SEC_FIELDS={
   message:[['msgTitle','العنوان'],['msgBody','الكلمة','ta'],['msgSign','التوقيع']],
   quote:[['quote','الآية أو البيت','ta'],['quoteSrc','المصدر']],
   album:[['photos','__photos']],
-  story:[['story','كل سطر: التاريخ | الحدث','pairs']],
-  reasons:[['reasons','كل سطر سبب','lines']],
-  song:[['songNote','جملة تحت الأغنية']],
   venue:[['venue','اسم المكان'],['map','رابط الخريطة','url'],['venue2','مكان ثاني (اختياري)'],['map2','رابط الخريطة الثانية','url']],
   calendar:[['hijri','اعرض التاريخ الهجري','check']],
   program:[['program','كل سطر: الوقت | الفقرة','pairs']],
   details:[['details','كل سطر تعليمة','lines']],
-  dress:[['dressText','الوصف'],['dressColors','ألوان مفصولة بفاصلة (#hex)','colors']],
   video:[['video','رابط يوتيوب','url']],
   wishes:[['wishes','تهاني جاهزة — كل سطر: الاسم: التهنئة','lines']],
   attend:[['attendBase','رقم يبدأ منه العداد','num']],
@@ -319,14 +315,13 @@ function adminEdit(P){
   /* music library */
   const renderSongs=()=>{
     const q=$('#f_msearch').value.trim().toLowerCase();
-    const rows=[...Object.entries(TRACKS).map(([k,t])=>({v:'trk:'+k,n:t.n,tag:'مدمجة — تشتغل دائماً',prev:MUS_DIR+k+'.mp3'})),
-      ...SONGS.map(s=>({v:'yt:'+s.id,n:s.n,tag:s.c.map(c=>CATS[c]).filter(Boolean).slice(0,3).join('، '),yt:s.id,cats:s.c}))]
+    const rows=[...SONGS.map(s=>({v:'yt:'+s.id,n:s.n,tag:s.c.map(c=>CATS[c]).filter(Boolean).slice(0,3).join('، '),yt:s.id,cats:s.c}))]
       .filter(r=>!q||(r.n+' '+r.tag).toLowerCase().includes(q))
       .sort((a,b)=>(b.cats?.includes(d.cat)?1:0)-(a.cats?.includes(d.cat)?1:0));
     $('#songlist').innerHTML=rows.map(r=>`<label class="track"><input type="radio" name="f_mus" value="${esc(r.v)}" ${d.music===r.v?'checked':''}><span>${esc(r.n)}<small>${esc(r.tag||'')}</small></span>${r.prev?`<button class="btn sm ghost" type="button" data-prev="${esc(r.prev)}">▶ اسمع</button>`:`<a class="btn sm ghost" href="https://www.youtube.com/watch?v=${r.yt}" target="_blank" rel="noopener">يوتيوب</a>`}</label>`).join('')
       +`<label class="track"><input type="radio" name="f_mus" value="" ${!d.music?'checked':''}><span>بدون موسيقى</span></label>`;
   };
-  const musCur=()=>{$('#mcur').textContent='الحالية: '+musicLabel(d)+(+d.musicStart?` · من الثانية ${d.musicStart}`:'')+(isYT(d.music)?' · بالمعاينة هنا تشتغل موسيقى بديلة، وعلى موقعك المنشور تشتغل الأغنية نفسها':'');};
+  const musCur=()=>{$('#mcur').textContent='الحالية: '+musicLabel(d)+(+d.musicStart?` · من الثانية ${d.musicStart}`:'')+(isYT(d.music)?' · الأغنية تشتغل من يوتيوب على موقعك المنشور':'');};
   renderSongs();musCur();
   $('#f_msearch').oninput=renderSongs;
   $('#songlist').addEventListener('change',e=>{if(e.target.name==='f_mus'){d.music=e.target.value;const s=songById(ytId(d.music));if(s){d.musicStart=s.s;$('#f_mstart').value=s.s;}musCur();soon();}});
