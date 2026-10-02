@@ -291,12 +291,20 @@ function adminEdit(P){
         <div class="three"><label class="check"><input type="checkbox" id="f_show" ${d.show?'checked':''}> يظهر بالمعرض</label><label class="check"><input type="checkbox" id="f_feat" ${d.feat?'checked':''}> بواجهة الموقع</label>
           <div class="field"><label for="f_pop">ترتيب "الأكثر طلباً"</label><input id="f_pop" type="number" min="0" max="99" value="${+d.pop||0}"></div></div>
       </fieldset>
+      <fieldset class="custbox"><legend>صور الزبون</legend>
+        <p class="note" style="margin:0">ارفع الصورة من جهازك (الموبايل أو الكمبيوتر). تتصغّر تلقائياً وتنحفظ ويا التصميم.</p>
+        <div class="custmain"><div class="cprev" id="cprev"></div>
+          <div class="cbtns"><label class="btn">📷 ارفع صورة الواجهة<input type="file" id="f_cphoto" accept="image/*" hidden></label>
+            <button class="btn ghost sm" type="button" id="f_crm">حذف الصورة</button></div></div>
+        <div class="field"><span class="lbl">مكان الصورة بالبطاقة</span>${radios('f_pmode',PHOTO_MODES,d.photoMode)}</div>
+        <div class="field"><span class="lbl">صور الألبوم (تكدر تختار أكثر من صورة)</span><div class="phbox" id="custPhotos"></div>
+          <label class="btn sm ghost" style="align-self:flex-start">+ أضف صور للألبوم<input type="file" id="f_calbum" accept="image/*" multiple hidden></label></div>
+      </fieldset>
       <fieldset><legend>الشكل العام</legend>
         <div class="field"><span class="lbl">طريقة العرض</span>${radios('f_layout',LAYOUTS,d.layout)}</div>
         <div class="field"><span class="lbl">الخلفية</span>${radios('f_theme',THEMES,d.theme)}</div>
-        <div class="field"><span class="lbl">صورة حقيقية فوق</span>${radios('f_pmode',PHOTO_MODES,d.photoMode)}</div>
-        <div class="bggrid" id="bggrid">${Object.entries(BGS).map(([k,n])=>`<button type="button" data-bg="${k}" title="${n}" aria-pressed="${d.photo===BG_DIR+k+'.webp'}"><img src="${BG_DIR+k}.webp" alt="${n}" loading="lazy"></button>`).join('')}
-          <label class="bgup">+ صورتك<input type="file" id="f_bgup" accept="image/*" hidden></label></div>
+        <span class="lbl">أو اختار صورة جاهزة</span><div class="bggrid" id="bggrid">${Object.entries(BGS).map(([k,n])=>`<button type="button" data-bg="${k}" title="${n}" aria-pressed="${d.photo===BG_DIR+k+'.webp'}"><img src="${BG_DIR+k}.webp" alt="${n}" loading="lazy"></button>`).join('')}
+          </div>
         <div class="two"><div class="field"><label for="f_frame">إطار حول الاسم</label><select id="f_frame">${opt(FRAMES,d.frame)}</select></div>
           <div class="field"><label for="f_corners">زخرفة البطاقات والفواصل</label><select id="f_corners">${opt({none:'بدون',...TINTS},d.corners)}</select></div></div>
       </fieldset>
@@ -363,8 +371,20 @@ function adminEdit(P){
   $('#songlist').addEventListener('click',e=>{const b=e.target.closest('[data-prev]');if(!b)return;e.preventDefault();const k=b.dataset.prev;
     if(prevKey===k){stopPrev();return;}stopPrev();prevAudio=new Audio(k);prevKey=k;prevAudio.play().catch(()=>toast('ما اشتغل الصوت'));b.textContent='■ وقّف';});
   /* photos */
-  $('#bggrid').addEventListener('click',e=>{const b=e.target.closest('[data-bg]');if(!b)return;d.photo=BG_DIR+b.dataset.bg+'.webp';if(d.photoMode==='none'){d.photoMode='band';$(`input[name=f_pmode][value=band]`).checked=true;}$$('#bggrid [data-bg]').forEach(x=>x.setAttribute('aria-pressed',x===b));paint();});
-  $('#f_bgup').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{d.photo=await shrinkImage(f,1200);if(d.photoMode==='none'){d.photoMode='band';$(`input[name=f_pmode][value=band]`).checked=true;}paint();}catch(err){toast('ما گدرت أقرا الصورة');}};
+  $('#bggrid').addEventListener('click',e=>{const b=e.target.closest('[data-bg]');if(!b)return;d.photo=BG_DIR+b.dataset.bg+'.webp';if(d.photoMode==='none'){d.photoMode='band';$(`input[name=f_pmode][value=band]`).checked=true;}$$('#bggrid [data-bg]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderCust();paint();});
+  const renderCust=()=>{
+    $('#cprev').innerHTML=safeImg(d.photo)?`<img src="${esc(d.photo)}" alt="صورة الواجهة">`:'<span>ماكو صورة</span>';
+    $('#f_crm').hidden=!d.photo;
+    $('#custPhotos').innerHTML=d.photos.map((p,i)=>`<div class="pth"><img src="${esc(p)}" alt=""><button type="button" data-rmc="${i}" aria-label="حذف الصورة">×</button></div>`).join('')||'<span class="note">ماكو صور بالألبوم</span>';
+  };
+  const setMode=m=>{d.photoMode=m;const r=$(`input[name=f_pmode][value=${m}]`);if(r)r.checked=true;};
+  $('#f_cphoto').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{d.photo=await shrinkImage(f,1200);if(d.photoMode==='none')setMode('band');$$('#bggrid [data-bg]').forEach(x=>x.setAttribute('aria-pressed','false'));renderCust();paint();toast('انضافت الصورة');}catch(err){toast('ما گدرت أقرا الصورة');}e.target.value='';};
+  $('#f_crm').onclick=()=>{d.photo='';setMode('none');$$('#bggrid [data-bg]').forEach(x=>x.setAttribute('aria-pressed','false'));renderCust();paint();};
+  $('#f_calbum').onchange=async e=>{for(const f of e.target.files){try{d.photos.push(await shrinkImage(f,1100));}catch(err){toast('ما گدرت أقرا صورة');}}e.target.value='';
+    if(!d.sections.includes('album')){const i=d.sections.indexOf('card');d.sections.splice(i+1,0,'album');renderSecs();}
+    renderCust();renderPhotos();paint();toast('انضافت الصور للألبوم');};
+  $('#custPhotos').addEventListener('click',e=>{const b=e.target.closest('[data-rmc]');if(!b)return;d.photos.splice(+b.dataset.rmc,1);renderCust();renderPhotos();paint();});
+  renderCust();
   /* layers */
   const renderLayers=()=>{
     $('#layers').innerHTML=(d.layers||[]).map((l,i)=>{const A=ART[l.a]||{};const tints=A.svg?A.tints:A.mask?TINTS:null;
@@ -421,7 +441,7 @@ function adminEdit(P){
   });
   sl.addEventListener('click',e=>{
     const mv=e.target.closest('[data-mv]');if(mv){e.preventDefault();const k=mv.closest('.secrow').dataset.k,i=d.sections.indexOf(k),j=i+(+mv.dataset.mv);if(j<0||j>=d.sections.length)return;[d.sections[i],d.sections[j]]=[d.sections[j],d.sections[i]];renderSecs();paint();return;}
-    const rp=e.target.closest('[data-rmp]');if(rp){d.photos.splice(+rp.dataset.rmp,1);renderPhotos();paint();}
+    const rp=e.target.closest('[data-rmp]');if(rp){d.photos.splice(+rp.dataset.rmp,1);renderPhotos();renderCust();paint();}
   });
   /* colours */
   $('#palgrid').onclick=e=>{const b=e.target.closest('[data-pal]');if(!b)return;Object.assign(d,applyPal(b.dataset.pal));['bg','card','ink','acc','acc2','door'].forEach(k=>$('#f_'+k).value=d[k]);$('#f_wax').value=d.wax;$$('#palgrid [data-pal]').forEach(x=>x.setAttribute('aria-pressed',x===b));paint();};
