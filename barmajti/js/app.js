@@ -17,7 +17,10 @@ const visible=()=>DATA.designs.filter(d=>d.show);
 const slugOf=k=>Object.keys(SLUGS).find(s=>SLUGS[s]===k);
 function readCategory(){let q=null;try{q=new URLSearchParams(location.search).get('category');}catch(e){}return SLUGS[q]||SLUGS[location.hash.slice(1)]||null;}
 function writeCategory(k){try{const u=new URL(location.href);if(k==='all')u.searchParams.delete('category');else u.searchParams.set('category',slugOf(k));history.replaceState(null,'',u.pathname+u.search+u.hash);}catch(e){}}
-function readGuest(){try{return (new URLSearchParams(location.search).get('to')||'').trim().slice(0,80);}catch(e){return'';}}
+/* guest name: ?to=Name, or simply #Name at the end of the gift link (_ or - stand for spaces) */
+function readGuest(){let n='';try{n=new URLSearchParams(location.search).get('to')||'';
+  if(!n&&new URLSearchParams(location.search).has('gift')){const h=decodeURIComponent(location.hash.slice(1));if(h&&h!=='admin'&&!/^BR-\d+$/i.test(h))n=h.replace(/[_-]+/g,' ');}}catch(e){}
+  return n.trim().slice(0,80);}
 const wantsNames=()=>{try{return new URLSearchParams(location.search).has('names');}catch(e){return false;}};
 function readGift(){let q=null;try{q=new URLSearchParams(location.search).get('gift');}catch(e){}const h=location.hash.slice(1);const code=(q||(/^BR-\d+$/i.test(h)?h:'')||'').toUpperCase();return code?DATA.designs.find(d=>d.code===code):null;}
 
