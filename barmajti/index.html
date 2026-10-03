@@ -106,24 +106,31 @@ textarea.inp{resize:vertical;min-height:70px}
 .toast.show{transform:translate(-50%,0)}
 
 /* ---------- public page ---------- */
-.pg{min-height:100%;background:var(--white);color:var(--black);font-family:'Mada',sans-serif}
+.pg{--pbg:#fff;--pbtn:#765955;--pic:#fff;--ptx:#000;min-height:100%;background:var(--pbg);color:var(--ptx);font-family:'Mada',sans-serif}
 .pg-in{max-width:520px;margin:0 auto;padding:44px 18px 26px;text-align:center}
-.pg .pav{width:112px;height:112px;border-radius:50%;margin:0 auto 14px;background:var(--soft) center/cover;border:3px solid var(--brand);display:grid;place-items:center;color:var(--brand);font-size:2.4rem}
+.pg .pav{width:160px;height:160px;border-radius:50%;margin:0 auto 16px;background:rgba(128,128,128,.15) center/cover;border:4px solid var(--pbtn);display:grid;place-items:center;color:var(--pbtn);font-size:3.4rem}
 .pg h1{font-size:1.65rem;font-weight:900;line-height:1.3}
 .pg .bio{opacity:.7;margin:6px auto 22px;max-width:400px;white-space:pre-line}
 .pg .links{display:flex;flex-direction:column;gap:12px}
-.pg .lb{display:flex;align-items:center;gap:12px;padding:15px 18px;border-radius:16px;background:var(--brand);color:var(--white);font-weight:800;font-size:1.05rem;transition:transform .15s}
+.pg .lb{display:flex;align-items:center;gap:12px;padding:15px 18px;border-radius:16px;background:var(--pbtn);color:var(--pic);font-weight:800;font-size:1.05rem;transition:transform .15s}
 .pg .lb:hover{transform:translateY(-2px)}
-.pg .lb i{width:26px;font-size:1.3rem}
+.pg .lb i{width:26px;font-size:1.3rem;color:var(--pic)}
 .pg .lb .t{flex:1}
 .pg .lb .sp{width:26px}
-.pg .lb.ph{background:var(--soft);color:var(--brand);border:1.5px dashed var(--brand);justify-content:center}
-.pg .made{margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
-.pg .made img{height:58px;margin:0 auto 10px;display:block}
-.pg .made .cta{display:inline-flex;align-items:center;gap:8px;background:var(--black);color:var(--white);padding:12px 24px;border-radius:14px;font-weight:800}
-.pg .made .ig{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:800;color:var(--brand)}
+.pg .lb.ph{background:transparent;color:var(--ptx);border:1.5px dashed var(--ptx);opacity:.6;justify-content:center}
+.pg .made{margin-top:34px;padding-top:22px;border-top:1px solid rgba(128,128,128,.3)}
+.pg .made .lg{display:inline-block;background:#fff;border-radius:14px;padding:6px 12px;margin-bottom:12px}
+.pg .made img{height:52px;display:block}
+.pg .made .cta{display:inline-flex;align-items:center;gap:8px;background:var(--ptx);color:var(--pbg);padding:12px 24px;border-radius:14px;font-weight:800}
+.pg .made .ig{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:800;color:var(--ptx)}
 .pg .made .ig i{font-size:1.2rem}
 body.view{background:var(--white)}
+.colrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.colrow:last-child{border-bottom:0}
+.colrow b{font-weight:800}
+.colrow .sws{display:flex;gap:10px}
+.sw{width:38px;height:38px;border-radius:50%;cursor:pointer;border:1.5px solid rgba(0,0,0,.25);display:grid;place-items:center;font-size:.9rem}
+.sw.on{outline:3px solid var(--brand);outline-offset:3px}
 body.view .pg{min-height:100vh}
 </style>
 </head>
@@ -179,8 +186,13 @@ body.view .pg{min-height:100vh}
         <div class="picker hidden" id="picker"></div>
       </div>
 
+      <div class="card">
+        <h2><span class="num">3</span> الألوان</h2>
+        <div id="colors"></div>
+      </div>
+
       <div class="card result" id="result">
-        <h2><span class="num">3</span> رابطك</h2>
+        <h2><span class="num">4</span> رابطك</h2>
         <button class="btn btn-brand btn-wide" onclick="publish()"><i class="fa-solid fa-link"></i> إنشاء الرابط</button>
         <div id="out" class="hidden">
           <div class="urlrow">
@@ -233,7 +245,10 @@ const PLATFORMS = {
   store:{n:'متجري',i:'fa-solid fa-bag-shopping',u:'',ph:'رابط المتجر'},
   custom:{n:'رابط آخر',i:'fa-solid fa-link',u:'',ph:'https://…'}
 };
-const EMPTY = {name:'',bio:'',avatar:'',links:[]};
+const COLORS = {w:['#ffffff','أبيض'],b:['#000000','أسود'],m:['#765955','لون الشعار']};
+const COLOR_PARTS = [['bg','لون الخلفية'],['btn','لون الأزرار'],['ic','لون الأيقونات وكتابة الأزرار'],['tx','لون الخط']];
+const DEFAULT_C = {bg:'w',btn:'m',ic:'w',tx:'b'};
+const EMPTY = {name:'',bio:'',avatar:'',links:[],c:{...DEFAULT_C}};
 let S = load() || clone(EMPTY);
 
 /* ---------- helpers ---------- */
@@ -251,6 +266,7 @@ function sanitize(d){
     name:String(d.name||'').slice(0,60),
     bio:String(d.bio||'').slice(0,300),
     avatar:/^(data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+|https?:\/\/[^'"()\s]+)$/.test(d.avatar||'')?d.avatar:'',
+    c:Object.fromEntries(COLOR_PARTS.map(([k])=>[k,COLORS[d.c&&d.c[k]]?d.c[k]:DEFAULT_C[k]])),
     links:(Array.isArray(d.links)?d.links:[]).slice(0,50).map(l=>({
       p:PLATFORMS[l&&l.p]?l.p:'custom',
       t:String(l&&l.t||'').slice(0,60),
@@ -283,13 +299,17 @@ function renderPage(d, el, preview){
     const p=PLATFORMS[l.p];
     return `<a class="lb" href="${esc(url)}" target="_blank" rel="noopener"><i class="${p.i}"></i><span class="t">${esc(l.t||p.n)}</span><span class="sp"></span></a>`;
   }).join('');
-  el.innerHTML=`<div class="pg"><div class="pg-in">
+  const col=k=>COLORS[d.c[k]][0], other=x=>x==='#000000'?'#ffffff':'#000000';
+  const bg=col('bg'),ic=col('ic'),tx=col('tx');
+  // keep things visible when someone picks the same colour twice
+  const btn=col('btn')===bg?other(bg):col('btn'), icon=ic===btn?other(btn):ic, text=tx===bg?other(bg):tx;
+  el.innerHTML=`<div class="pg" style="--pbg:${bg};--pbtn:${btn};--pic:${icon};--ptx:${text}"><div class="pg-in">
     <div class="pav" ${d.avatar?`style="background-image:url('${esc(d.avatar)}')"`:''}>${d.avatar?'':'<i class="fa-solid fa-user"></i>'}</div>
     <h1>${esc(d.name||(preview?'اسمك':''))}</h1>
     ${d.bio||preview?`<p class="bio">${esc(d.bio||(preview?'نبذتك تطلع هنا':''))}</p>`:''}
     <div class="links">${btns||(preview?'<div class="lb ph">روابطك تطلع هنا</div>':'')}</div>
     <div class="made">
-      <a href="${esc(siteUrl())}" target="_blank"><img src="logo.png" alt="برمجتي"></a>
+      <a class="lg" href="${esc(siteUrl())}" target="_blank"><img src="logo.png" alt="برمجتي"></a><br>
       <a class="cta" href="${esc(siteUrl())}#edit" target="_blank"><i class="fa-solid fa-link"></i> أنشئ رابطك مجاناً</a><br>
       <a class="ig" href="${SITE_IG}" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> تابعنا barmgte@</a>
     </div>
@@ -338,11 +358,17 @@ function buildPicker(){
     const last=$('#links .link:last-child');last?.scrollIntoView({behavior:'smooth',block:'center'});last?.querySelector('[data-f=v]')?.focus({preventScroll:true});
   });
 }
+function renderColors(){
+  $('#colors').innerHTML=COLOR_PARTS.map(([k,label])=>`<div class="colrow"><b>${label}</b><div class="sws">${
+    Object.entries(COLORS).map(([id,[hex,name]])=>`<button class="sw ${S.c[k]===id?'on':''}" data-k="${k}" data-v="${id}" title="${name}" aria-label="${label}: ${name}" style="background:${hex}"></button>`).join('')
+  }</div></div>`).join('');
+  $('#colors').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{S.c[b.dataset.k]=b.dataset.v;renderColors();changed()});
+}
 function refresh(){
   $('#name').value=S.name;$('#bio').value=S.bio;
   const av=$('#avPrev');av.style.backgroundImage=S.avatar?`url('${S.avatar}')`:'';av.innerHTML=S.avatar?'':'<i class="fa-solid fa-camera"></i>';
   $('#avDel').classList.toggle('hidden',!S.avatar);
-  renderLinks();changed();
+  renderLinks();renderColors();changed();
 }
 let raf;
 function changed(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderPage(S,$('#screen'),true);save();$('#out').classList.add('hidden')})}
