@@ -165,6 +165,8 @@ export async function handleImage(req, { images }) {
       "content-type": type,
       // the page links to ?v=<timestamp>, so each new photo gets a new URL
       "cache-control": "public, max-age=31536000, immutable",
+      // let Netlify's CDN answer repeat requests without running the function
+      "netlify-cdn-cache-control": "public, durable, max-age=31536000, immutable",
       "x-content-type-options": "nosniff",
     },
   });

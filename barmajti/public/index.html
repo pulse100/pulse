@@ -6,13 +6,12 @@
 <title>برمجتي | كل حساباتك برابط واحد</title>
 <meta name="description" content="برمجتي — اجمع كل حساباتك برابط واحد بسهولة.">
 <meta name="theme-color" content="#765955">
-<link rel="icon" href="/logo.png">
+<link rel="icon" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mada:wght@400;600;800;900&display=swap">
-<link rel="stylesheet" href="/vendor/fa/css/all.min.css">
-<script src="/vendor/lz-string.min.js"></script>
-<script src="/vendor/qrcode.min.js"></script>
+<style>/* only the 37 icons the site uses (subset of Font Awesome Free, CC BY 4.0 / OFL) */@font-face{font-family:"bi";src:url(/icons.woff2) format("woff2");font-display:block}.fa-solid,.fa-brands,.fa-regular{font-family:"bi";font-style:normal;font-weight:normal;font-variant:normal;display:inline-block;line-height:1;text-rendering:auto;-webkit-font-smoothing:antialiased}.fa-arrow-down:before{content:"\f063"}.fa-arrow-left:before{content:"\f060"}.fa-arrow-up:before{content:"\f062"}.fa-bag-shopping:before{content:"\f290"}.fa-camera:before{content:"\f030"}.fa-copy:before{content:"\f0c5"}.fa-discord:before{content:"\f392"}.fa-envelope:before{content:"\f0e0"}.fa-eye:before{content:"\f06e"}.fa-facebook-f:before{content:"\f39e"}.fa-floppy-disk:before{content:"\f0c7"}.fa-github:before{content:"\f09b"}.fa-globe:before{content:"\f0ac"}.fa-instagram:before{content:"\f16d"}.fa-key:before{content:"\f084"}.fa-link:before{content:"\f0c1"}.fa-linkedin-in:before{content:"\f0e1"}.fa-location-dot:before{content:"\f3c5"}.fa-pen:before{content:"\f304"}.fa-phone:before{content:"\f095"}.fa-plus:before{content:"\2b"}.fa-qrcode:before{content:"\f029"}.fa-share-nodes:before{content:"\f1e0"}.fa-shuffle:before{content:"\f074"}.fa-snapchat:before{content:"\f2ab"}.fa-spinner:before{content:"\f110"}.fa-telegram:before{content:"\f2c6"}.fa-threads:before{content:"\e618"}.fa-tiktok:before{content:"\e07b"}.fa-trash:before{content:"\f1f8"}.fa-up-right-from-square:before{content:"\f35d"}.fa-upload:before{content:"\f093"}.fa-user:before{content:"\f007"}.fa-whatsapp:before{content:"\f232"}.fa-x-twitter:before{content:"\e61b"}.fa-xmark:before{content:"\f00d"}.fa-youtube:before{content:"\f167"}.fa-spin{animation:fa-spin 1s linear infinite}@keyframes fa-spin{to{transform:rotate(360deg)}}</style>
+<script>var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",e={};function t(r,o){if(!e[r]){e[r]={};for(var n=0;n<r.length;n++)e[r][r.charAt(n)]=n}return e[r][o]}var i={compressToBase64:function(r){if(null==r)return"";var n=i._compress(r,6,function(r){return o.charAt(r)});switch(n.length%4){default:case 0:return n;case 1:return n+"===";case 2:return n+"==";case 3:return n+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(n){return t(o,r.charAt(n))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(r){return null==r?"":""==r?null:i._decompress(r.length,16384,function(o){return r.charCodeAt(o)-32})},compressToUint8Array:function(r){for(var o=i.compress(r),n=new Uint8Array(2*o.length),e=0,t=o.length;e<t;e++){var s=o.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null==o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;e<t;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(r){return null==r?"":i._compress(r,6,function(r){return n.charAt(r)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(o){return t(n,r.charAt(o))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(r,o,n){if(null==r)return"";var e,t,i,s={},u={},a="",p="",c="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<r.length;i+=1)if(a=r.charAt(i),Object.prototype.hasOwnProperty.call(s,a)||(s[a]=f++,u[a]=!0),p=c+a,Object.prototype.hasOwnProperty.call(s,p))c=p;else{if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++),s[p]=f++,c=String(a)}if(""!==c){if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==o-1){d.push(n(m));break}v++}return d.join("")},decompress:function(r){return null==r?"":""==r?null:i._decompress(r.length,32768,function(o){return r.charCodeAt(o)})},_decompress:function(o,n,e){var t,i,s,u,a,p,c,l=[],f=4,h=4,d=3,m="",v=[],g={val:e(0),position:n,index:1};for(t=0;t<3;t+=1)l[t]=t;for(s=0,a=Math.pow(2,2),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 2:return""}for(l[3]=c,i=c,v.push(c);;){if(g.index>o)return"";for(s=0,a=Math.pow(2,d),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(c=s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 2:return v.join("")}if(0==f&&(f=Math.pow(2,d),d++),l[c])m=l[c];else{if(c!==h)return null;m=i+i.charAt(0)}v.push(m),l[h++]=i+m.charAt(0),i=m,0==--f&&(f=Math.pow(2,d),d++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module?module.exports=LZString:"undefined"!=typeof angular&&null!=angular&&angular.module("LZString",[]).factory("LZString",function(){return LZString});</script>
 <style>
 :root{--brand:#765955;--black:#000;--white:#fff;--soft:rgba(118,89,85,.08);--line:rgba(0,0,0,.12)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -162,11 +161,11 @@ body.view .pg{min-height:100vh}
 <!-- ================= LANDING ================= -->
 <div id="landing">
   <nav class="nav">
-    <a href="#"><img src="/logo.png" alt="برمجتي"></a>
+    <a href="#"><img src="/logo.webp" alt="برمجتي"></a>
     <button class="btn btn-brand" onclick="go('#edit')">أنشئ رابطك</button>
   </nav>
   <section class="hero">
-    <img class="logo" src="/logo.png" alt="شعار برمجتي">
+    <img class="logo" src="/logo.webp" alt="شعار برمجتي">
     <h1>كل حساباتك <span>برابط واحد</span></h1>
     <p>اجمع انستغرام، تيك توك، واتساب، قناة التلكرام وكل روابطك بصفحة وحدة بسيطة، وحط رابطها بالبايو.</p>
     <button class="btn btn-brand" style="padding:15px 34px;font-size:1.15rem" onclick="go('#edit')">أنشئ رابطك مجاناً <i class="fa-solid fa-arrow-left"></i></button>
@@ -182,7 +181,7 @@ body.view .pg{min-height:100vh}
 <!-- ================= EDITOR ================= -->
 <div id="editor" class="hidden">
   <nav class="nav">
-    <a href="#" onclick="go('');return false"><img src="/logo.png" alt="برمجتي"></a>
+    <a href="#" onclick="go('');return false"><img src="/logo.webp" alt="برمجتي"></a>
     <button class="btn btn-brand" onclick="publish()">إنشاء الرابط</button>
   </nav>
   <div class="ed">
@@ -366,7 +365,7 @@ function renderPage(d, el, preview){
     ${d.bio||preview?`<p class="bio">${esc(d.bio||(preview?'نبذتك تطلع هنا':''))}</p>`:''}
     <div class="links">${btns||(preview?'<div class="lb ph">روابطك تطلع هنا</div>':'')}</div>
     <div class="made">
-      <a class="lg" href="${esc(siteUrl())}" target="_blank"><img src="/logo.png" alt="برمجتي"></a><br>
+      <a class="lg" href="${esc(siteUrl())}" target="_blank"><img src="/logo.webp" alt="برمجتي"></a><br>
       <a class="cta" href="${esc(siteUrl())}#edit" target="_blank"><i class="fa-solid fa-link"></i> أنشئ رابطك مجاناً</a><br>
       <a class="ig" href="${SITE_IG}" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> تابعنا barmgte@</a>
     </div>
@@ -521,13 +520,15 @@ async function publish(){
   }catch(e){toast('تعذر الاتصال، تأكد من الإنترنت')}
   finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات'}
 }
-function showResult(slug){
+let qrLib;
+function loadQR(){return qrLib||(qrLib=new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='/vendor/qrcode.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)}))}
+async function showResult(slug){
   const url=siteUrl()+slug;
   $('#out').classList.remove('hidden');
   $('#url').value=url;$('#openUrl').href=url;
   $('#editUrl').value=siteUrl()+'#edit='+slug+'.'+KEYS[slug];
   const q=$('#qr');q.innerHTML='';
-  new QRCode(q,{text:url,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  await loadQR().catch(()=>{});if(window.QRCode)new QRCode(q,{text:url,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
   $('#result').scrollIntoView({behavior:'smooth',block:'start'});
 }
 async function deletePage(){
@@ -565,7 +566,7 @@ async function route(){
     const r=await fetch('/api/page?u='+encodeURIComponent(path.toLowerCase())).then(x=>x.ok?x.json():null).catch(()=>null);
     if(r&&r.data){showView(sanitize(r.data));return}
     document.body.classList.add('view');$('#view').classList.remove('hidden');
-    $('#view').innerHTML=`<div class="notfound"><div><img src="/logo.png" alt="برمجتي" style="height:70px;margin-bottom:14px"><h2 style="font-weight:900">ما لكينا هذي الصفحة</h2><p style="opacity:.7;margin:6px 0 18px">يمكن الرابط غلط أو الصفحة انحذفت.</p><a class="btn btn-brand" href="/#edit">أنشئ رابطك مجاناً</a></div></div>`;
+    $('#view').innerHTML=`<div class="notfound"><div><img src="/logo.webp" alt="برمجتي" style="height:70px;margin-bottom:14px"><h2 style="font-weight:900">ما لكينا هذي الصفحة</h2><p style="opacity:.7;margin:6px 0 18px">يمكن الرابط غلط أو الصفحة انحذفت.</p><a class="btn btn-brand" href="/#edit">أنشئ رابطك مجاناً</a></div></div>`;
     return;
   }
   // old long links still work
