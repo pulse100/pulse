@@ -1,0 +1,9 @@
+# Cloudflare Pages config for برمجتي (barmajti.pages.dev)
+name = "barmajti"
+pages_build_output_dir = "public"
+compatibility_date = "2026-10-01"
+
+# pages + photos live in Workers KV
+[[kv_namespaces]]
+binding = "BARMAJTI"
+id = "ff0923fca9a946d487ee077aa6d45eab"

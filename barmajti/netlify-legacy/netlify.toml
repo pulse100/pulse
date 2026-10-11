@@ -1,0 +1,9 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+# برمجتي moved to Cloudflare Pages; every old link goes there (the #... part carries over)
+[[redirects]]
+  from = "/*"
+  to = "https://barmajti.pages.dev/:splat"
+  status = 301
+  force = false

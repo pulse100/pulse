@@ -1,0 +1,10 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# short links: /name opens the app, which loads that page from /api/page.
+# Rewrites never shadow real files, so logo.png, vendor/ etc. still load.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
